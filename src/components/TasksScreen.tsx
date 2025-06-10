@@ -11,35 +11,68 @@ const TasksScreen = ({ onTaskComplete }) => {
     {
       id: 1,
       title: 'Microanálise de Dados',
-      description: 'Ajude a IA a identificar padrões de consumo em grandes volumes de dados.',
+      description: 'Ao ativar essa tarefa, seu dispositivo ajuda a processar pequenos lotes de dados em tempo real. A IA usa sua conexão para validar padrões e testar variações.',
       cost: 10,
-      returnMin: 30,
-      returnMax: 50,
-      timeMin: 2,
-      timeMax: 4,
+      returnMin: 50,
+      returnMax: 85,
+      timeMin: 0.5,
+      timeMax: 0.5,
       icon: '🔍'
     },
     {
       id: 2,
-      title: 'Validação de Anúncios',
-      description: 'Simule visualizações para que marcas testem campanhas publicitárias.',
-      cost: 20,
+      title: 'Validação de Anúncios Publicitários',
+      description: 'Seu dispositivo simula visualizações reais de anúncios, permitindo que empresas testem campanhas com dados reais antes de colocá-las no ar.',
+      cost: 15,
       returnMin: 60,
-      returnMax: 90,
-      timeMin: 3,
-      timeMax: 6,
+      returnMax: 105,
+      timeMin: 0.75,
+      timeMax: 0.75,
       icon: '📢'
     },
     {
       id: 3,
-      title: 'Previsão de Consumo com IA',
-      description: 'Contribua com o treinamento de modelos que analisam comportamento digital.',
+      title: 'Previsão de Comportamento com IA',
+      description: 'Conectando-se à rede Valory X, seu celular contribui com dados anônimos que ajudam a IA a prever como pessoas interagem com conteúdos digitais.',
       cost: 20,
-      returnMin: 55,
-      returnMax: 80,
-      timeMin: 5,
-      timeMax: 8,
+      returnMin: 80,
+      returnMax: 140,
+      timeMin: 0.83,
+      timeMax: 0.83,
       icon: '🤖'
+    },
+    {
+      id: 4,
+      title: 'Análise de Palavras-chave Comerciais',
+      description: 'A rede usa seu dispositivo para identificar termos e palavras mais buscados online. Isso ajuda a IA a mapear interesses do público.',
+      cost: 35,
+      returnMin: 110,
+      returnMax: 150,
+      timeMin: 1,
+      timeMax: 1,
+      icon: '🔎'
+    },
+    {
+      id: 5,
+      title: 'Limpeza e Correção de Dados',
+      description: 'Enquanto estiver conectado, seu aparelho ajuda a IA a corrigir erros, duplicações e falhas em conjuntos de dados.',
+      cost: 16,
+      returnMin: 84,
+      returnMax: 122,
+      timeMin: 1,
+      timeMax: 1,
+      icon: '🧹'
+    },
+    {
+      id: 6,
+      title: 'Mapeamento de Tendências de Mercado',
+      description: 'Seu celular analisa em tempo real como o público reage a novos produtos e ideias. Isso permite à IA detectar tendências emergentes.',
+      cost: 50,
+      returnMin: 205,
+      returnMax: 340,
+      timeMin: 1.17,
+      timeMax: 1.17,
+      icon: '📈'
     }
   ];
 
@@ -107,7 +140,15 @@ const TasksScreen = ({ onTaskComplete }) => {
                     </div>
                     <div className="text-center">
                       <p className="text-blue-400 font-medium">
-                        {task.timeMin}-{task.timeMax}min
+                        {task.timeMin === task.timeMax ? 
+                          (task.timeMin < 1 ? 
+                            `${Math.round(task.timeMin * 60)}seg` : 
+                            task.timeMin === 1 ? 
+                              '1min' : 
+                              `${Math.floor(task.timeMin)}min ${Math.round((task.timeMin % 1) * 60)}seg`
+                          ) :
+                          `${task.timeMin}-${task.timeMax}min`
+                        }
                       </p>
                       <p className="text-gray-500">Tempo</p>
                     </div>
