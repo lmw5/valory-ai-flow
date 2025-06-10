@@ -147,7 +147,7 @@ const LandingPage = ({
               <div className="w-20 h-20 bg-gradient-to-r from-blue-500/20 to-blue-600/20 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:from-blue-500/30 group-hover:to-blue-600/30 transition-all duration-300">
                 <Zap className="h-10 w-10 text-blue-400" />
               </div>
-              <h4 className="text-2xl font-medium mb-4">Conecte-se à rede Valory X</h4>
+              <h4 className="text-2xl font-medium mb-4">Conecte-se à rede ValoryX</h4>
               <p className="text-gray-400 leading-relaxed text-lg">Cadastre-se agora e desbloqueie acesso imediato à nossa plataforma inteligente. Milhares já estão lucrando com a força da IA — você será o próximo.</p>
             </div>
             <div className="text-center group hover:scale-105 transition-all duration-300 bg-gray-900/30 p-8 rounded-3xl backdrop-blur-sm border border-gray-800/50">
