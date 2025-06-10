@@ -34,6 +34,10 @@ const HelpScreen = () => {
     }
   ];
 
+  const handleSupportClick = () => {
+    window.open('https://wa.me/5517981693677', '_blank');
+  };
+
   return (
     <div className="min-h-screen pb-20 pt-8 px-6">
       <div className="max-w-md mx-auto space-y-6">
@@ -55,7 +59,10 @@ const HelpScreen = () => {
             <p className="text-gray-300 text-sm">
               Nossa equipe está sempre disponível para ajudar
             </p>
-            <button className="text-blue-400 text-sm hover:text-blue-300 transition-colors">
+            <button 
+              onClick={handleSupportClick}
+              className="text-blue-400 text-sm hover:text-blue-300 transition-colors"
+            >
               Falar com suporte →
             </button>
           </div>
