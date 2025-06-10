@@ -28,13 +28,20 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
           </div>
         </div>
 
-        {/* Activate Tasks Button */}
+        {/* Action Buttons */}
         <div className="space-y-4">
           <Button 
             onClick={() => onNavigate('tasks')}
             className="w-full h-16 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
           >
             Ativar tarefas automatizadas
+          </Button>
+          
+          <Button 
+            onClick={() => onNavigate('withdraw')}
+            className="w-full h-16 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+          >
+            Solicitar Saque
           </Button>
           
           <p className="text-center text-gray-400 text-sm leading-relaxed">
