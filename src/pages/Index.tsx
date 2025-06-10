@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import LoginScreen from '../components/LoginScreen';
 import Dashboard from '../components/Dashboard';
@@ -20,9 +19,13 @@ const Index = () => {
   };
 
   const handleTaskComplete = (earnings) => {
+    // Update balance with earnings
     setBalance(prev => prev + earnings);
+    // Increment completed tasks counter
     setCompletedTasks(prev => prev + 1);
+    // Add earnings to total earned (cumulative)
     setTotalEarned(prev => prev + earnings);
+    // Return to dashboard
     setCurrentScreen('dashboard');
   };
 
