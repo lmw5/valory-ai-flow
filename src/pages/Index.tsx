@@ -1,4 +1,6 @@
+
 import React, { useState } from 'react';
+import LandingPage from '../components/LandingPage';
 import LoginScreen from '../components/LoginScreen';
 import Dashboard from '../components/Dashboard';
 import TasksScreen from '../components/TasksScreen';
@@ -7,7 +9,7 @@ import HelpScreen from '../components/HelpScreen';
 import BottomNavigation from '../components/BottomNavigation';
 
 const Index = () => {
-  const [currentScreen, setCurrentScreen] = useState('login');
+  const [currentScreen, setCurrentScreen] = useState('landing');
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(50.00); // Initial R$50 bonus
   const [completedTasks, setCompletedTasks] = useState(0);
@@ -31,6 +33,11 @@ const Index = () => {
 
   const renderScreen = () => {
     switch (currentScreen) {
+      case 'landing':
+        return <LandingPage 
+          onSignIn={() => setCurrentScreen('login')}
+          onSignUp={() => setCurrentScreen('login')} // For now, both redirect to login
+        />;
       case 'login':
         return <LoginScreen onLogin={handleLogin} />;
       case 'dashboard':
@@ -48,12 +55,9 @@ const Index = () => {
       case 'help':
         return <HelpScreen />;
       default:
-        return <Dashboard 
-          user={user} 
-          balance={balance} 
-          completedTasks={completedTasks}
-          totalEarned={totalEarned}
-          onNavigate={setCurrentScreen} 
+        return <LandingPage 
+          onSignIn={() => setCurrentScreen('login')}
+          onSignUp={() => setCurrentScreen('login')}
         />;
     }
   };
