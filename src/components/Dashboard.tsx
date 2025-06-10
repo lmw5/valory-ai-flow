@@ -3,8 +3,6 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 
 const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) => {
-  const canWithdraw = balance >= 250;
-  
   return (
     <div className="min-h-screen pb-20 pt-8 px-6">
       <div className="max-w-md mx-auto space-y-8">
@@ -40,22 +38,11 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
           </Button>
           
           <Button 
-            onClick={() => canWithdraw && onNavigate('withdraw')}
-            disabled={!canWithdraw}
-            className={`w-full h-16 font-medium rounded-2xl text-lg shadow-lg transition-all duration-300 ${
-              canWithdraw 
-                ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white hover:shadow-xl hover:scale-[1.02]'
-                : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
-            }`}
+            onClick={() => onNavigate('withdraw')}
+            className="w-full h-16 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
           >
             Solicitar Saque
           </Button>
-          
-          {!canWithdraw && (
-            <p className="text-center text-orange-400 text-sm">
-              Saldo mínimo de R$ 250,00 necessário para saque
-            </p>
-          )}
           
           <p className="text-center text-gray-400 text-sm leading-relaxed">
             Use seu saldo para contratar tarefas que a IA executará por você
