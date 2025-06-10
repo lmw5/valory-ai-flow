@@ -64,10 +64,11 @@ const LandingPage = ({
       <header className="relative z-50 px-6 py-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl"></div>
-            <h1 className="text-3xl font-light tracking-wide">
-              Valory <span className="text-green-400 font-medium">X</span>
-            </h1>
+            <img 
+              src="/lovable-uploads/74d282a0-4426-4471-95c8-a1f0150289e9.png" 
+              alt="Valory X" 
+              className="h-12 w-auto"
+            />
           </div>
           <nav className="hidden md:flex items-center space-x-8">
             <a href="#services" className="text-gray-300 hover:text-white transition-colors text-sm">
@@ -299,10 +300,11 @@ const LandingPage = ({
           <div className="grid md:grid-cols-4 gap-8 mb-12">
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl"></div>
-                <span className="text-2xl font-light">
-                  Valory <span className="text-green-400 font-medium">X</span>
-                </span>
+                <img 
+                  src="/lovable-uploads/74d282a0-4426-4471-95c8-a1f0150289e9.png" 
+                  alt="Valory X" 
+                  className="h-10 w-auto"
+                />
               </div>
               <p className="text-gray-400 leading-relaxed">
                 Democratizando o acesso a oportunidades de renda através da inteligência artificial.
