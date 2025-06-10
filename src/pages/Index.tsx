@@ -1,7 +1,9 @@
 
 import React, { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { useUserSession } from '@/hooks/useUserSession';
+import AuthScreen from '../components/AuthScreen';
 import LandingPage from '../components/LandingPage';
-import LoginScreen from '../components/LoginScreen';
 import Dashboard from '../components/Dashboard';
 import TasksScreen from '../components/TasksScreen';
 import WithdrawScreen from '../components/WithdrawScreen';
@@ -9,55 +11,83 @@ import HelpScreen from '../components/HelpScreen';
 import BottomNavigation from '../components/BottomNavigation';
 
 const Index = () => {
-  const [currentScreen, setCurrentScreen] = useState('landing');
-  const [user, setUser] = useState(null);
-  const [balance, setBalance] = useState(50.00); // Initial R$50 bonus
-  const [completedTasks, setCompletedTasks] = useState(0);
-  const [totalEarned, setTotalEarned] = useState(50.00); // Initial R$50 bonus
+  const { user, loading: authLoading } = useAuth();
+  const { session, profile, completedTasks, loading: sessionLoading, updateBalance, addAchievement } = useUserSession();
+  const [currentScreen, setCurrentScreen] = useState('dashboard');
+  const [showLanding, setShowLanding] = useState(!user);
 
-  const handleLogin = (userData) => {
-    setUser(userData);
-    setCurrentScreen('dashboard');
-  };
+  // Show loading while checking auth state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 flex items-center justify-center">
+        <div className="text-white text-xl">Carregando...</div>
+      </div>
+    );
+  }
 
-  const handleTaskComplete = (earnings) => {
-    // Update balance with earnings
-    setBalance(prev => prev + earnings);
-    // Increment completed tasks counter
-    setCompletedTasks(prev => prev + 1);
-    // Add earnings to total earned (cumulative)
-    setTotalEarned(prev => prev + earnings);
+  // Show landing page if not authenticated and user hasn't clicked to sign in
+  if (!user && showLanding) {
+    return <LandingPage 
+      onSignIn={() => setShowLanding(false)}
+      onSignUp={() => setShowLanding(false)}
+    />;
+  }
+
+  // Show auth screen if not authenticated
+  if (!user) {
+    return <AuthScreen />;
+  }
+
+  // Show loading while fetching user session data
+  if (sessionLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 flex items-center justify-center">
+        <div className="text-white text-xl">Carregando dados...</div>
+      </div>
+    );
+  }
+
+  const handleTaskComplete = async (earnings: number, taskTitle: string) => {
+    if (!session) return;
+    
+    // Update balance in database
+    const newBalance = session.balance + earnings;
+    await updateBalance(newBalance);
+    
+    // Add achievement record
+    await addAchievement(taskTitle, earnings);
+    
     // Return to dashboard
     setCurrentScreen('dashboard');
   };
 
   const renderScreen = () => {
     switch (currentScreen) {
-      case 'landing':
-        return <LandingPage 
-          onSignIn={() => setCurrentScreen('login')}
-          onSignUp={() => setCurrentScreen('login')} // For now, both redirect to login
-        />;
-      case 'login':
-        return <LoginScreen onLogin={handleLogin} />;
       case 'dashboard':
         return <Dashboard 
-          user={user} 
-          balance={balance} 
+          user={profile} 
+          balance={session?.balance || 0} 
           completedTasks={completedTasks}
-          totalEarned={totalEarned}
+          totalEarned={session?.total_earned || 0}
           onNavigate={setCurrentScreen} 
         />;
       case 'tasks':
-        return <TasksScreen onTaskComplete={handleTaskComplete} />;
+        return <TasksScreen onTaskComplete={(earnings) => {
+          // We need to get the task title from the TasksScreen component
+          // For now, we'll use a generic title
+          handleTaskComplete(earnings, 'Tarefa Automatizada');
+        }} />;
       case 'withdraw':
-        return <WithdrawScreen balance={balance} />;
+        return <WithdrawScreen balance={session?.balance || 0} />;
       case 'help':
         return <HelpScreen />;
       default:
-        return <LandingPage 
-          onSignIn={() => setCurrentScreen('login')}
-          onSignUp={() => setCurrentScreen('login')}
+        return <Dashboard 
+          user={profile} 
+          balance={session?.balance || 0} 
+          completedTasks={completedTasks}
+          totalEarned={session?.total_earned || 0}
+          onNavigate={setCurrentScreen} 
         />;
     }
   };
@@ -65,12 +95,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
       {renderScreen()}
-      {user && (
-        <BottomNavigation 
-          currentScreen={currentScreen} 
-          onNavigate={setCurrentScreen} 
-        />
-      )}
+      <BottomNavigation 
+        currentScreen={currentScreen} 
+        onNavigate={setCurrentScreen} 
+      />
     </div>
   );
 };

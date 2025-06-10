@@ -83,8 +83,9 @@ const TasksScreen = ({ onTaskComplete }) => {
 
   const handleTaskComplete = (earnings) => {
     setIsExecuting(false);
+    const taskTitle = selectedTask?.title || 'Tarefa Automatizada';
     setSelectedTask(null);
-    onTaskComplete(earnings);
+    onTaskComplete(earnings, taskTitle);
   };
 
   if (isExecuting && selectedTask) {
