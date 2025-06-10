@@ -232,7 +232,7 @@ const LandingPage = ({
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h3 className="text-4xl md:text-5xl font-light mb-8">
-              Sobre a <span className="text-blue-400">TechCorp</span>
+              Sobre a <span className="text-blue-400">Valory</span>
             </h3>
             <p className="text-xl text-gray-300 leading-relaxed max-w-4xl mx-auto">
               Somos uma empresa de tecnologia focada em democratizar o acesso a oportunidades de renda através da inteligência artificial. 
