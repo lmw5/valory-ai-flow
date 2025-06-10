@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 
-const Dashboard = ({ user, balance, onNavigate }) => {
+const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) => {
   return (
     <div className="min-h-screen pb-20 pt-8 px-6">
       <div className="max-w-md mx-auto space-y-8">
@@ -45,11 +45,11 @@ const Dashboard = ({ user, balance, onNavigate }) => {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-4 mt-8">
           <div className="bg-gray-800/50 rounded-2xl p-4 text-center backdrop-blur-sm">
-            <p className="text-green-400 text-2xl font-light">12</p>
+            <p className="text-green-400 text-2xl font-light">{completedTasks}</p>
             <p className="text-gray-400 text-xs">Tarefas concluídas</p>
           </div>
           <div className="bg-gray-800/50 rounded-2xl p-4 text-center backdrop-blur-sm">
-            <p className="text-blue-400 text-2xl font-light">R$ 340</p>
+            <p className="text-blue-400 text-2xl font-light">R$ {totalEarned.toFixed(0)}</p>
             <p className="text-gray-400 text-xs">Total ganho</p>
           </div>
         </div>

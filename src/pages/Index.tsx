@@ -10,7 +10,9 @@ import BottomNavigation from '../components/BottomNavigation';
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState('login');
   const [user, setUser] = useState(null);
-  const [balance, setBalance] = useState(125.50);
+  const [balance, setBalance] = useState(50.00); // Initial R$50 bonus
+  const [completedTasks, setCompletedTasks] = useState(0);
+  const [totalEarned, setTotalEarned] = useState(50.00); // Initial R$50 bonus
 
   const handleLogin = (userData) => {
     setUser(userData);
@@ -19,6 +21,8 @@ const Index = () => {
 
   const handleTaskComplete = (earnings) => {
     setBalance(prev => prev + earnings);
+    setCompletedTasks(prev => prev + 1);
+    setTotalEarned(prev => prev + earnings);
     setCurrentScreen('dashboard');
   };
 
@@ -27,7 +31,13 @@ const Index = () => {
       case 'login':
         return <LoginScreen onLogin={handleLogin} />;
       case 'dashboard':
-        return <Dashboard user={user} balance={balance} onNavigate={setCurrentScreen} />;
+        return <Dashboard 
+          user={user} 
+          balance={balance} 
+          completedTasks={completedTasks}
+          totalEarned={totalEarned}
+          onNavigate={setCurrentScreen} 
+        />;
       case 'tasks':
         return <TasksScreen onTaskComplete={handleTaskComplete} />;
       case 'withdraw':
@@ -35,7 +45,13 @@ const Index = () => {
       case 'help':
         return <HelpScreen />;
       default:
-        return <Dashboard user={user} balance={balance} onNavigate={setCurrentScreen} />;
+        return <Dashboard 
+          user={user} 
+          balance={balance} 
+          completedTasks={completedTasks}
+          totalEarned={totalEarned}
+          onNavigate={setCurrentScreen} 
+        />;
     }
   };
 
