@@ -120,7 +120,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      sanitize_user_input: {
+        Args: { input_text: string }
+        Returns: string
+      }
+      validate_text_input: {
+        Args: { input_text: string; max_length?: number }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
