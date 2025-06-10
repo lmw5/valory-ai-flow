@@ -6,9 +6,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 const WithdrawScreen = ({ balance }) => {
   const [showActivationModal, setShowActivationModal] = useState(false);
   const [showFeeModal, setShowFeeModal] = useState(false);
+  
+  const canWithdraw = balance >= 250;
+  const minimumAmount = 250;
 
   const handleWithdrawRequest = () => {
-    setShowActivationModal(true);
+    if (canWithdraw) {
+      setShowActivationModal(true);
+    }
   };
 
   const handleActivationConfirm = () => {
@@ -43,12 +48,33 @@ const WithdrawScreen = ({ balance }) => {
         </div>
 
         {/* Withdraw Button */}
-        <Button 
-          onClick={handleWithdrawRequest}
-          className="w-full h-16 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
-        >
-          Solicitar Saque
-        </Button>
+        <div className="space-y-4">
+          <Button 
+            onClick={handleWithdrawRequest}
+            disabled={!canWithdraw}
+            className={`w-full h-16 font-medium rounded-2xl text-lg shadow-lg transition-all duration-300 ${
+              canWithdraw 
+                ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-xl hover:scale-[1.02]'
+                : 'bg-gray-600/50 text-gray-400 cursor-not-allowed hover:scale-100'
+            }`}
+          >
+            Solicitar Saque
+          </Button>
+          
+          {!canWithdraw && (
+            <div className="bg-orange-500/10 border border-orange-500/30 rounded-2xl p-4 text-center">
+              <p className="text-orange-400 text-sm font-medium">
+                💰 Saldo mínimo necessário para saque
+              </p>
+              <p className="text-orange-300 text-lg font-semibold mt-1">
+                R$ {minimumAmount.toFixed(2).replace('.', ',')}
+              </p>
+              <p className="text-gray-400 text-xs mt-2">
+                Continue realizando tarefas para atingir o valor mínimo
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Info Cards */}
         <div className="space-y-4">
