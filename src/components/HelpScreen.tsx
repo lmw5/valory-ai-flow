@@ -14,7 +14,7 @@ const HelpScreen = () => {
     },
     {
       question: "O que é necessário para sacar?",
-      answer: "Para realizar o primeiro saque, é necessário ativar sua conta com um depósito de segurança de R$50. Após isso, uma taxa de processamento de 10% é aplicada sobre cada saque para manutenção dos serviços."
+      answer: "Você precisa atingir o saque mínimo de R$250 e realizar a ativação da sua conta. Após isso, o botão de saque será liberado e você poderá solicitar o valor disponível de forma simples e segura."
     },
     {
       question: "Quanto tempo demora para executar uma tarefa?",
