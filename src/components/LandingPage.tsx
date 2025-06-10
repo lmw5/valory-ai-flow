@@ -20,7 +20,7 @@ const LandingPage = ({
     comment: "Em 2 semanas já consegui mais de R$800 só deixando o app funcionando. Incrível!",
     rating: 5
   }, {
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
     name: "Ana Costa",
     comment: "Finalmente encontrei uma forma segura de ganhar dinheiro online. Super recomendo!",
     rating: 5

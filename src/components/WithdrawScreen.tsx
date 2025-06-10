@@ -18,7 +18,8 @@ const WithdrawScreen = ({ balance }) => {
 
   const handleActivationConfirm = () => {
     setShowActivationModal(false);
-    setShowFeeModal(true);
+    // Redireciona para o link especificado
+    window.open('https://seguro.valoryapp.com.br/r/16759r11914u836K', '_blank');
   };
 
   return (
