@@ -106,7 +106,7 @@ const WithdrawScreen = ({ balance }) => {
               <div className="text-center space-y-4">
                 <div className="text-4xl">🔐</div>
                 <p className="text-gray-300 leading-relaxed">
-                  Para ativar sua conta e liberar o saque, é necessário um depósito único de 
+                  Para liberar o saque e desbloquear todos os recursos da plataforma, é necessário ativar sua conta, sem mensalidades, sem taxas escondidas. Essa ativação garante sua conexão oficial à rede Valory X e libera o acesso completo aos ganhos. 
                   <span className="text-green-400 font-medium"> R$50</span>.
                 </p>
               </div>
