@@ -1,8 +1,48 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) => {
+  const investmentPlans = [
+    {
+      id: 'impulse',
+      name: 'Plano Impulse',
+      investment: 250,
+      dailyReturn: 180,
+      validity: 30,
+      totalRevenue: 5400,
+      iconColor: 'text-blue-400',
+      gradientFrom: 'from-blue-500/20',
+      gradientTo: 'to-blue-600/20',
+      buttonColor: 'from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
+    },
+    {
+      id: 'quantum',
+      name: 'Plano Quantum',
+      investment: 400,
+      dailyReturn: 390,
+      validity: 40,
+      totalRevenue: 15600,
+      iconColor: 'text-green-400',
+      gradientFrom: 'from-green-500/20',
+      gradientTo: 'to-green-600/20',
+      buttonColor: 'from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
+    },
+    {
+      id: 'valory-prime',
+      name: 'Plano Valory Prime',
+      investment: 600,
+      dailyReturn: 700,
+      validity: 30,
+      totalRevenue: 21000,
+      iconColor: 'text-purple-400',
+      gradientFrom: 'from-purple-500/20',
+      gradientTo: 'to-purple-600/20',
+      buttonColor: 'from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
+    }
+  ];
+
   return (
     <div className="min-h-screen pb-20 pt-8 px-6">
       <div className="max-w-md mx-auto space-y-8">
@@ -28,37 +68,62 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Investment Plans Section */}
         <div className="space-y-4">
-          <Button 
-            onClick={() => onNavigate('tasks')}
-            className="w-full h-16 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
-          >
-            Ativar tarefas automatizadas
-          </Button>
+          <h3 className="text-xl font-medium text-gray-200">Planos de Investimento</h3>
           
-          <Button 
-            onClick={() => onNavigate('withdraw')}
-            className="w-full h-16 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
-          >
-            Solicitar Saque
-          </Button>
+          {/* Investment Plan Cards */}
+          <div className="space-y-6">
+            {investmentPlans.map((plan) => (
+              <Card key={plan.id} className="relative bg-gradient-to-br from-gray-800/80 to-gray-900/90 border border-gray-700/30 overflow-hidden rounded-2xl shadow-xl">
+                <div className={`absolute inset-0 bg-gradient-to-br ${plan.gradientFrom} ${plan.gradientTo} opacity-20`}></div>
+                <CardContent className="p-5 relative">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center">
+                      <div className={`${plan.iconColor} bg-gray-800/80 p-2 rounded-lg mr-3`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M19.5 8.5a2.5 2.5 0 0 0-2.5-2.5h-3a2.5 2.5 0 0 0-2.5 2.5v1"></path>
+                          <path d="M16.5 8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"></path>
+                          <path d="M19.5 15.5a2.5 2.5 0 0 0-2.5-2.5h-9a2.5 2.5 0 0 0-2.5 2.5v1"></path>
+                          <path d="M10 15.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"></path>
+                        </svg>
+                      </div>
+                      <h4 className="text-lg font-medium text-white">{plan.name}</h4>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="space-y-1">
+                      <p className="text-xs text-gray-400">Valor do investimento</p>
+                      <p className="text-white font-medium">R$ {plan.investment.toFixed(2).replace('.', ',')}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-gray-400">Renda Diária</p>
+                      <p className="text-white font-medium">R$ {plan.dailyReturn.toFixed(2).replace('.', ',')}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-gray-400">Validade</p>
+                      <p className="text-white font-medium">{plan.validity} dias</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-gray-400">Receita Total</p>
+                      <p className="text-white font-medium">R$ {plan.totalRevenue.toFixed(2).replace('.', ',')}</p>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    className={`w-full h-12 bg-gradient-to-r ${plan.buttonColor} text-white font-medium rounded-xl text-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] mt-2`}
+                  >
+                    Ativar agora
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
           
-          <p className="text-center text-gray-400 text-sm leading-relaxed">
-            Use seu saldo para contratar tarefas que a IA executará por você
+          <p className="text-center text-gray-400 text-sm leading-relaxed mt-4">
+            Invista nos planos para receber rendas diárias automáticas
           </p>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-4 mt-8">
-          <div className="bg-gray-800/50 rounded-2xl p-4 text-center backdrop-blur-sm">
-            <p className="text-green-400 text-2xl font-light">{completedTasks}</p>
-            <p className="text-gray-400 text-xs">Tarefas concluídas</p>
-          </div>
-          <div className="bg-gray-800/50 rounded-2xl p-4 text-center backdrop-blur-sm">
-            <p className="text-blue-400 text-2xl font-light">R$ {totalEarned.toFixed(0)}</p>
-            <p className="text-gray-400 text-xs">Total ganho</p>
-          </div>
         </div>
       </div>
     </div>
