@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -48,7 +49,7 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
       id: 'deposit',
       title: 'Depositar',
       icon: ArrowRight,
-      action: () => console.log('Depositar')
+      action: () => onNavigate('deposit')
     },
     {
       id: 'withdraw',

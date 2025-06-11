@@ -7,6 +7,7 @@ import LandingPage from '../components/LandingPage';
 import Dashboard from '../components/Dashboard';
 import TasksScreen from '../components/TasksScreen';
 import WithdrawScreen from '../components/WithdrawScreen';
+import DepositScreen from '../components/DepositScreen';
 import HelpScreen from '../components/HelpScreen';
 import BottomNavigation from '../components/BottomNavigation';
 
@@ -79,6 +80,8 @@ const Index = () => {
         }} />;
       case 'withdraw':
         return <WithdrawScreen balance={session?.balance || 0} />;
+      case 'deposit':
+        return <DepositScreen onNavigate={setCurrentScreen} />;
       case 'help':
         return <HelpScreen />;
       default:
