@@ -1,9 +1,7 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, CoinsIcon } from 'lucide-react';
-import DailyProfitsDisplay from './DailyProfitsDisplay';
 
 const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) => {
   // Custom SVG icons for each plan
@@ -131,9 +129,6 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
             </div>
           </div>
         </div>
-
-        {/* Daily Profits Display */}
-        <DailyProfitsDisplay />
 
         {/* Quick Actions Menu */}
         <div className="space-y-4">
