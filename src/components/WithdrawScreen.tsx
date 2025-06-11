@@ -1,176 +1,216 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft } from 'lucide-react';
 
-const WithdrawScreen = ({ balance }) => {
-  const [showActivationModal, setShowActivationModal] = useState(false);
-  const [showFeeModal, setShowFeeModal] = useState(false);
-  
-  const canWithdraw = balance >= 250;
+interface WithdrawScreenProps {
+  balance: number;
+  onNavigate?: (screen: string) => void;
+}
+
+const WithdrawScreen = ({ balance, onNavigate }: WithdrawScreenProps) => {
+  const [pixKeyType, setPixKeyType] = useState('');
+  const [holderName, setHolderName] = useState('');
+  const [pixKey, setPixKey] = useState('');
+  const [amount, setAmount] = useState('');
+
   const minimumAmount = 250;
+  const feePercentage = 10;
+  
+  const numericAmount = parseFloat(amount) || 0;
+  const fee = numericAmount * (feePercentage / 100);
+  const finalAmount = numericAmount - fee;
 
-  const handleWithdrawRequest = () => {
-    if (canWithdraw) {
-      setShowActivationModal(true);
+  const isFormValid = pixKeyType && holderName.trim() && pixKey.trim() && numericAmount >= minimumAmount && numericAmount <= balance;
+
+  const handleWithdraw = () => {
+    if (isFormValid) {
+      console.log('Processando saque:', {
+        pixKeyType,
+        holderName,
+        pixKey,
+        amount: numericAmount,
+        fee,
+        finalAmount
+      });
+      // Aqui seria implementada a lógica de saque
     }
   };
 
-  const handleActivationConfirm = () => {
-    setShowActivationModal(false);
-    // Redireciona para o link especificado
-    window.open('https://seguro.valoryapp.com.br/r/16759r11914u836K', '_blank');
+  const formatCurrency = (value: number) => {
+    return value.toFixed(2).replace('.', ',');
   };
 
   return (
-    <div className="min-h-screen pb-20 pt-8 px-6">
+    <div className="min-h-screen pb-20 pt-8 px-6 bg-gradient-to-br from-gray-900 via-black to-gray-800">
       <div className="max-w-md mx-auto space-y-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-light text-white mb-2">
-            Solicitar Saque
-          </h2>
-          <p className="text-gray-400 text-sm">
-            Retire seus ganhos de forma rápida e segura
-          </p>
+        <div className="flex items-center space-x-4">
+          {onNavigate && (
+            <button
+              onClick={() => onNavigate('dashboard')}
+              className="p-2 rounded-full bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:bg-gray-700/50 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-300" />
+            </button>
+          )}
+          <h1 className="text-2xl font-light text-white text-center flex-1">
+            Retirar Dinheiro
+          </h1>
         </div>
 
         {/* Balance Display */}
-        <div className="bg-gradient-to-r from-gray-800/80 to-gray-700/80 rounded-3xl p-8 backdrop-blur-sm border border-gray-600/30 shadow-2xl text-center">
-          <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-3xl"></div>
-          <div className="relative space-y-4">
-            <p className="text-gray-400 text-sm font-medium tracking-wide uppercase">
-              Saldo Total Disponível
-            </p>
-            <p className="text-4xl font-light text-white">
-              R$ {balance.toFixed(2).replace('.', ',')}
-            </p>
-          </div>
+        <div className="bg-gradient-to-r from-gray-800/80 to-gray-700/80 rounded-3xl p-6 backdrop-blur-sm border border-gray-600/30 shadow-2xl text-center">
+          <p className="text-gray-400 text-sm font-medium tracking-wide uppercase mb-2">
+            Saldo Disponível
+          </p>
+          <p className="text-3xl font-light text-white">
+            R$ {formatCurrency(balance)}
+          </p>
         </div>
 
-        {/* Withdraw Button */}
-        <div className="space-y-4">
-          <Button 
-            onClick={handleWithdrawRequest}
-            disabled={!canWithdraw}
-            className={`w-full h-16 font-medium rounded-2xl text-lg shadow-lg transition-all duration-300 ${
-              canWithdraw 
-                ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-xl hover:scale-[1.02]'
-                : 'bg-gray-600/50 text-gray-400 cursor-not-allowed hover:scale-100'
+        {/* Withdraw Form */}
+        <div className="space-y-6">
+          <div className="bg-gray-800/50 rounded-3xl p-6 backdrop-blur-sm border border-gray-600/30">
+            <h2 className="text-lg font-medium text-white mb-6 text-center">
+              Dados para Saque
+            </h2>
+            
+            <div className="space-y-4">
+              {/* Tipo de Chave Pix */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300">
+                  Tipo de Chave Pix
+                </label>
+                <Select value={pixKeyType} onValueChange={setPixKeyType}>
+                  <SelectTrigger className="w-full h-12 bg-gray-700/50 border-gray-600/50 text-white rounded-xl focus:border-blue-500/50">
+                    <SelectValue placeholder="Selecione uma opção" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-600">
+                    <SelectItem value="cpf" className="text-white hover:bg-gray-700">CPF</SelectItem>
+                    <SelectItem value="email" className="text-white hover:bg-gray-700">E-mail</SelectItem>
+                    <SelectItem value="celular" className="text-white hover:bg-gray-700">Celular</SelectItem>
+                    <SelectItem value="aleatoria" className="text-white hover:bg-gray-700">Aleatória</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Nome do Titular */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300">
+                  Nome do Titular
+                </label>
+                <Input
+                  type="text"
+                  value={holderName}
+                  onChange={(e) => setHolderName(e.target.value)}
+                  placeholder="Digite o nome completo do titular da conta"
+                  className="h-12 bg-gray-700/50 border-gray-600/50 text-white rounded-xl placeholder:text-gray-500 focus:border-blue-500/50"
+                />
+              </div>
+
+              {/* Chave Pix */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300">
+                  Chave Pix
+                </label>
+                <Input
+                  type="text"
+                  value={pixKey}
+                  onChange={(e) => setPixKey(e.target.value)}
+                  placeholder="Insira sua chave Pix"
+                  className="h-12 bg-gray-700/50 border-gray-600/50 text-white rounded-xl placeholder:text-gray-500 focus:border-blue-500/50"
+                />
+              </div>
+
+              {/* Valor */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300">
+                  Valor
+                </label>
+                <Input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Insira o valor de retirada"
+                  min={minimumAmount}
+                  max={balance}
+                  className="h-12 bg-gray-700/50 border-gray-600/50 text-white rounded-xl placeholder:text-gray-500 focus:border-blue-500/50"
+                />
+                {numericAmount > 0 && (
+                  <div className="text-xs text-gray-400 space-y-1">
+                    <p>Taxa (10%): R$ {formatCurrency(fee)}</p>
+                    <p className="text-green-400 font-medium">Valor a receber: R$ {formatCurrency(finalAmount)}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Validation Messages */}
+            {amount && numericAmount < minimumAmount && (
+              <div className="mt-4 p-3 bg-orange-500/10 border border-orange-500/30 rounded-xl">
+                <p className="text-orange-400 text-sm">
+                  Valor mínimo para saque: R$ {formatCurrency(minimumAmount)}
+                </p>
+              </div>
+            )}
+
+            {amount && numericAmount > balance && (
+              <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
+                <p className="text-red-400 text-sm">
+                  Valor não pode ser maior que o saldo disponível
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Withdraw Button */}
+          <Button
+            onClick={handleWithdraw}
+            disabled={!isFormValid}
+            className={`w-full h-16 rounded-2xl font-bold text-lg shadow-xl transition-all duration-300 transform ${
+              isFormValid 
+                ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white hover:scale-[1.02] shadow-blue-500/25' 
+                : 'bg-gray-700/50 text-gray-400 cursor-not-allowed'
             }`}
           >
-            Solicitar Saque
+            Sacar
           </Button>
-          
-          {!canWithdraw && (
-            <div className="bg-orange-500/10 border border-orange-500/30 rounded-2xl p-4 text-center">
-              <p className="text-orange-400 text-sm font-medium">
-                💰 Saldo mínimo necessário para saque
-              </p>
-              <p className="text-orange-300 text-lg font-semibold mt-1">
-                R$ {minimumAmount.toFixed(2).replace('.', ',')}
-              </p>
-              <p className="text-gray-400 text-xs mt-2">
-                Continue realizando tarefas para atingir o valor mínimo
-              </p>
-            </div>
-          )}
         </div>
 
-        {/* Info Cards */}
-        <div className="space-y-4">
-          <div className="bg-gray-800/50 rounded-2xl p-4 backdrop-blur-sm">
-            <h3 className="text-white font-medium mb-2">💳 Métodos de Saque</h3>
-            <p className="text-gray-400 text-sm">PIX, Transferência bancária</p>
-          </div>
-          
-          <div className="bg-gray-800/50 rounded-2xl p-4 backdrop-blur-sm">
-            <h3 className="text-white font-medium mb-2">⏱️ Tempo de Processamento</h3>
-            <p className="text-gray-400 text-sm">Até 2 horas úteis</p>
-          </div>
-          
-          <div className="bg-gray-800/50 rounded-2xl p-4 backdrop-blur-sm">
-            <h3 className="text-white font-medium mb-2">💰 Valor Mínimo</h3>
-            <p className="text-gray-400 text-sm">R$ 250,00</p>
+        {/* Instructions */}
+        <div className="bg-gray-800/50 rounded-3xl p-6 backdrop-blur-sm border border-gray-600/30">
+          <h3 className="text-lg font-bold text-white mb-4">
+            Instruções de Retirada
+          </h3>
+          <div className="space-y-3 text-gray-300 text-sm leading-relaxed">
+            <div className="flex items-start space-x-3">
+              <span className="text-blue-400 mt-1">•</span>
+              <p>O valor mínimo de saque é R$ 250,00</p>
+            </div>
+            <div className="flex items-start space-x-3">
+              <span className="text-blue-400 mt-1">•</span>
+              <p>Saques podem ser realizados a qualquer momento, sem limite de horário ou frequência</p>
+            </div>
+            <div className="flex items-start space-x-3">
+              <span className="text-blue-400 mt-1">•</span>
+              <p>É cobrada uma taxa de 10% sobre o valor sacado</p>
+            </div>
+            <div className="flex items-start space-x-3">
+              <span className="text-blue-400 mt-1">•</span>
+              <p>Os valores geralmente caem entre 5 a 10 minutos, podendo levar até 24h em casos excepcionais</p>
+            </div>
           </div>
         </div>
 
-        {/* Activation Modal */}
-        <Dialog open={showActivationModal} onOpenChange={setShowActivationModal}>
-          <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-sm mx-auto">
-            <DialogHeader>
-              <DialogTitle className="text-center text-lg font-medium">
-                Ativação de Conta
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-6 p-4">
-              <div className="text-center space-y-4">
-                <div className="text-4xl">🔐</div>
-                <p className="text-gray-300 leading-relaxed">
-                  Para liberar o saque e desbloquear todos os recursos da plataforma, é necessário ativar sua conta, sem mensalidades, sem taxas escondidas. Essa ativação garante sua conexão oficial à rede Valory X e libera o acesso completo aos ganhos.
-                </p>
-              </div>
-              
-              <div className="space-y-3">
-                <Button 
-                  onClick={handleActivationConfirm}
-                  className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
-                >
-                  Continuar
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowActivationModal(false)}
-                  className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
-                >
-                  Cancelar
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        {/* Fee Modal */}
-        <Dialog open={showFeeModal} onOpenChange={setShowFeeModal}>
-          <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-sm mx-auto">
-            <DialogHeader>
-              <DialogTitle className="text-center text-lg font-medium">
-                Taxa de Processamento
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-6 p-4">
-              <div className="text-center space-y-4">
-                <div className="text-4xl">📊</div>
-                <p className="text-gray-300 leading-relaxed">
-                  Para liberar o valor total, será cobrada uma taxa de 
-                  <span className="text-blue-400 font-medium"> 10%</span> sobre o saque solicitado.
-                </p>
-                
-                <div className="bg-gray-800/50 rounded-xl p-4">
-                  <p className="text-sm text-gray-400">Valor a receber:</p>
-                  <p className="text-xl text-green-400 font-medium">
-                    R$ {(balance * 0.9).toFixed(2).replace('.', ',')}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                <Button 
-                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                >
-                  Confirmar Saque
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowFeeModal(false)}
-                  className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
-                >
-                  Cancelar
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        {/* Security Note */}
+        <div className="text-center pt-4">
+          <p className="text-xs text-gray-500 leading-relaxed">
+            🔒 Seus dados estão protegidos com criptografia de ponta a ponta
+          </p>
+        </div>
       </div>
     </div>
   );
