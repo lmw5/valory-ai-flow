@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { ArrowRight, CoinsIcon, Check, HelpCircle } from 'lucide-react';
 
 const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) => {
   const investmentPlans = [
@@ -43,6 +44,33 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
     }
   ];
 
+  const quickActions = [
+    {
+      id: 'deposit',
+      title: 'Depositar',
+      icon: ArrowRight,
+      action: () => console.log('Depositar')
+    },
+    {
+      id: 'withdraw',
+      title: 'Retirar Dinheiro',
+      icon: CoinsIcon,
+      action: () => onNavigate('withdraw')
+    },
+    {
+      id: 'checklist',
+      title: 'Checklist',
+      icon: Check,
+      action: () => onNavigate('tasks')
+    },
+    {
+      id: 'help',
+      title: 'Ajuda',
+      icon: HelpCircle,
+      action: () => onNavigate('help')
+    }
+  ];
+
   return (
     <div className="min-h-screen pb-20 pt-8 px-6">
       <div className="max-w-md mx-auto space-y-8">
@@ -65,6 +93,30 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
                 R$ {balance.toFixed(2).replace('.', ',')}
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* Quick Actions Menu */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium text-gray-200 flex items-center">
+            🔄 Menu de ações rápidas
+          </h3>
+          
+          <div className="grid grid-cols-4 gap-4">
+            {quickActions.map((action) => (
+              <button
+                key={action.id}
+                onClick={action.action}
+                className="flex flex-col items-center space-y-2 p-4 bg-gray-800/50 rounded-2xl backdrop-blur-sm border border-gray-700/30 hover:bg-gray-700/50 transition-all duration-300 hover:scale-105"
+              >
+                <div className="bg-gray-700/80 p-3 rounded-xl">
+                  <action.icon className="w-6 h-6 text-gray-300" />
+                </div>
+                <span className="text-xs text-gray-400 text-center font-medium">
+                  {action.title}
+                </span>
+              </button>
+            ))}
           </div>
         </div>
 
