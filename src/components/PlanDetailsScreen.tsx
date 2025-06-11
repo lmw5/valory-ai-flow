@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -35,16 +36,19 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
   };
 
   const handleGoBack = () => {
-    console.log('Botão de voltar clicado - navegando para dashboard');
+    console.log('🔙 Botão de voltar clicado - navegando de volta para dashboard');
+    console.log('📍 Estado atual: detalhes do plano ->', plan.name);
+    console.log('🎯 Destino: dashboard');
     onNavigate('dashboard');
   };
 
   const handleConfirm = async () => {
-    console.log('Iniciando processo de contratação do plano:', plan.name);
-    console.log('Saldo atual:', balance, 'Valor do plano:', plan.investment);
+    console.log('💰 Iniciando processo de contratação do plano:', plan.name);
+    console.log('💳 Verificando saldo - Atual:', formatCurrency(balance), 'Necessário:', formatCurrency(plan.investment));
     
     if (balance >= plan.investment) {
       setIsProcessing(true);
+      console.log('✅ Saldo suficiente - processando contratação...');
       
       try {
         const success = await addInvestment({
@@ -58,23 +62,24 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
         setIsProcessing(false);
 
         if (success) {
-          console.log('Plano contratado com sucesso!');
+          console.log('🎉 Plano contratado com sucesso!');
           setShowSuccessDialog(true);
         } else {
-          console.error('Erro ao contratar plano - falha na transação');
+          console.error('❌ Erro ao contratar plano - falha na transação');
         }
       } catch (error) {
-        console.error('Erro ao contratar plano:', error);
+        console.error('💥 Erro ao contratar plano:', error);
         setIsProcessing(false);
       }
     } else {
-      console.log('Saldo insuficiente - mostrando dialog de erro');
+      console.log('💸 Saldo insuficiente - mostrando dialog de erro');
+      console.log('📊 Déficit:', formatCurrency(plan.investment - balance));
       setShowInsufficientBalanceDialog(true);
     }
   };
 
   const handleSuccessClose = () => {
-    console.log('Fechando dialog de sucesso e retornando ao dashboard');
+    console.log('✨ Fechando dialog de sucesso e retornando ao dashboard');
     setShowSuccessDialog(false);
     onNavigate('dashboard');
   };

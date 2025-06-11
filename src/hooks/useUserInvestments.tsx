@@ -46,9 +46,9 @@ export const useUserInvestments = () => {
     if (!user) return;
 
     try {
-      // Direct query to user_investments table
+      // Query user_investments table with proper typing
       const { data, error } = await supabase
-        .from('user_investments' as any)
+        .from('user_investments')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
@@ -108,7 +108,7 @@ export const useUserInvestments = () => {
 
     try {
       const { error } = await supabase
-        .from('user_investments' as any)
+        .from('user_investments')
         .insert({
           user_id: user.id,
           plan_id: planData.plan_id,
