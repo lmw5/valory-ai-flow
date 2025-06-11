@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,7 +46,7 @@ const WithdrawScreen = ({ balance, onNavigate }: WithdrawScreenProps) => {
     <div className="min-h-screen pb-20 pt-8 px-6 bg-gradient-to-br from-gray-900 via-black to-gray-800">
       <div className="max-w-md mx-auto space-y-8">
         {/* Header */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center justify-between">
           {onNavigate && (
             <button
               onClick={() => onNavigate('dashboard')}
@@ -59,6 +58,8 @@ const WithdrawScreen = ({ balance, onNavigate }: WithdrawScreenProps) => {
           <h1 className="text-2xl font-light text-white text-center flex-1">
             Retirar Dinheiro
           </h1>
+          {/* Invisible spacer to balance the layout */}
+          <div className="w-10 h-10"></div>
         </div>
 
         {/* Balance Display */}
