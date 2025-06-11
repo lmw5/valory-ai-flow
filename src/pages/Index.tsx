@@ -125,12 +125,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
       {renderScreen()}
-      {currentScreen !== 'plan-details' && (
-        <BottomNavigation 
-          currentScreen={currentScreen} 
-          onNavigate={handleNavigate} 
-        />
-      )}
+      <BottomNavigation 
+        currentScreen={currentScreen} 
+        onNavigate={handleNavigate} 
+      />
     </div>
   );
 };
