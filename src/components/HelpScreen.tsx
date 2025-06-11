@@ -5,32 +5,44 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 const HelpScreen = () => {
   const faqs = [
     {
-      question: "Como as tarefas geram dinheiro?",
-      answer: "As tarefas são executadas por nossa IA avançada que processa dados para empresas parceiras. O valor é gerado através da análise de padrões, validação de campanhas e otimização de algoritmos que têm valor comercial real."
+      question: "O que é o Valory X?",
+      answer: "O Valory X é uma plataforma que conecta seu dispositivo a uma rede inteligente de inteligência artificial. Ao ativar um plano, seu celular passa a colaborar com essa rede e você recebe ganhos diários de forma automática."
     },
     {
-      question: "De onde vem o valor do saldo?",
-      answer: "O saldo é creditado automaticamente após a conclusão bem-sucedida de cada tarefa. Os valores são pagos pelas empresas que utilizam os resultados das análises realizadas pela nossa inteligência artificial."
+      question: "Preciso fazer alguma tarefa manual?",
+      answer: "Não. Tudo é feito de forma automática após a ativação do plano. A IA utiliza seu dispositivo conectado para executar tarefas digitais em segundo plano — você só precisa acompanhar seus ganhos pelo app."
     },
     {
-      question: "O que é necessário para sacar?",
-      answer: "Você precisa atingir o saque mínimo de R$250 e realizar a ativação da sua conta. Após isso, o botão de saque será liberado e você poderá solicitar o valor disponível de forma simples e segura."
+      question: "Quanto posso ganhar por dia?",
+      answer: "Seu rendimento diário depende do plano contratado. Cada plano informa claramente quanto você receberá por dia e qual será o total ao final da validade."
     },
     {
-      question: "Quanto tempo demora para executar uma tarefa?",
-      answer: "As tarefas têm duração variável entre 2 a 8 minutos, dependendo da complexidade. O tempo é determinado automaticamente pela IA baseado no volume de dados a ser processado."
+      question: "Posso contratar mais de um plano?",
+      answer: "Sim! Você pode contratar múltiplos planos e seus rendimentos serão somados automaticamente."
     },
     {
-      question: "É seguro investir nas tarefas?",
-      answer: "Sim, todas as tarefas são executadas em ambiente seguro e criptografado. Nossa plataforma utiliza tecnologia blockchain para garantir transparência e segurança em todas as transações."
+      question: "Quando começo a ganhar?",
+      answer: "Assim que você ativa um plano, o sistema inicia o rastreio e a geração dos rendimentos automaticamente. Você pode ver os ganhos acumulando em tempo real na aba \"Investimentos\"."
     },
     {
-      question: "Posso executar várias tarefas por dia?",
-      answer: "Sim, você pode executar quantas tarefas desejar, desde que tenha saldo suficiente para cobrir os custos. Recomendamos começar com tarefas menores para conhecer o sistema."
+      question: "Onde vejo meus investimentos?",
+      answer: "Acesse a aba \"Investimentos\" no menu inferior. Lá você verá quantos planos ativos possui, seu ganho diário e o total acumulado até agora."
     },
     {
-      question: "Como funciona o sistema de IA?",
-      answer: "Nossa IA utiliza algoritmos de machine learning para processar grandes volumes de dados de forma automatizada. Ela identifica padrões, valida informações e gera insights valiosos para nossos parceiros comerciais."
+      question: "Existe valor mínimo para começar?",
+      answer: "Sim. O plano de entrada mais acessível atualmente custa R$250,00. Esse valor é usado para ativar sua conexão com a rede de IA."
+    },
+    {
+      question: "Preciso pagar mensalidade?",
+      answer: "Não. O pagamento do plano é único, válido pelo período de dias definido (ex: 30, 40 ou 60 dias). Após esse prazo, o plano é finalizado e você pode contratar outro se quiser."
+    },
+    {
+      question: "Os valores realmente são pagos?",
+      answer: "Sim! Os ganhos gerados pelo seu plano são reais e ficam disponíveis no seu saldo interno. Quando o sistema liberar saques (ou novas funcionalidades de uso do saldo), você poderá utilizá-lo conforme as regras da plataforma."
+    },
+    {
+      question: "E se eu não ativar nenhum plano?",
+      answer: "Você poderá acessar o app, mas não ganhará rendimentos. A ativação de um plano é essencial para se conectar à rede e começar a lucrar."
     }
   ];
 
