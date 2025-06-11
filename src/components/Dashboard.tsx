@@ -5,6 +5,46 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, CoinsIcon } from 'lucide-react';
 
 const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) => {
+  // Custom SVG icons for each plan
+  const PlanIcons = {
+    impulse: () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        <circle cx="12" cy="12" r="1" fill="currentColor"/>
+        <circle cx="8" cy="8" r="0.5" fill="currentColor" opacity="0.6"/>
+        <circle cx="16" cy="16" r="0.5" fill="currentColor" opacity="0.6"/>
+      </svg>
+    ),
+    quantum: () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <circle cx="12" cy="12" r="8" strokeDasharray="4 4" opacity="0.5"/>
+        <circle cx="12" cy="12" r="1" fill="currentColor"/>
+        <path d="M12 2v2"/>
+        <path d="M12 20v2"/>
+        <path d="M2 12h2"/>
+        <path d="M20 12h2"/>
+        <path d="M4.93 4.93l1.41 1.41"/>
+        <path d="M17.66 17.66l1.41 1.41"/>
+        <path d="M4.93 19.07l1.41-1.41"/>
+        <path d="M17.66 6.34l1.41-1.41"/>
+      </svg>
+    ),
+    valoryPrime: () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="12,2 22,8.5 22,15.5 12,22 2,15.5 2,8.5"/>
+        <polygon points="12,7 17,10 17,14 12,17 7,14 7,10" fill="currentColor" opacity="0.2"/>
+        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+        <path d="M12 2v5"/>
+        <path d="M12 17v5"/>
+        <path d="M2 8.5l5 2.5"/>
+        <path d="M17 11l5-2.5"/>
+        <path d="M2 15.5l5-2.5"/>
+        <path d="M17 13l5 2.5"/>
+      </svg>
+    )
+  };
+
   const investmentPlans = [
     {
       id: 'impulse',
@@ -16,7 +56,8 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
       iconColor: 'text-blue-400',
       gradientFrom: 'from-blue-500/20',
       gradientTo: 'to-blue-600/20',
-      buttonColor: 'from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
+      buttonColor: 'from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700',
+      Icon: PlanIcons.impulse
     },
     {
       id: 'quantum',
@@ -28,7 +69,8 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
       iconColor: 'text-green-400',
       gradientFrom: 'from-green-500/20',
       gradientTo: 'to-green-600/20',
-      buttonColor: 'from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
+      buttonColor: 'from-green-500 to-green-600 hover:from-green-600 hover:to-green-700',
+      Icon: PlanIcons.quantum
     },
     {
       id: 'valory-prime',
@@ -40,7 +82,8 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
       iconColor: 'text-purple-400',
       gradientFrom: 'from-purple-500/20',
       gradientTo: 'to-purple-600/20',
-      buttonColor: 'from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
+      buttonColor: 'from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700',
+      Icon: PlanIcons.valoryPrime
     }
   ];
 
@@ -120,13 +163,8 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
                 <CardContent className="p-5 relative">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center">
-                      <div className={`${plan.iconColor} bg-gray-800/80 p-2 rounded-lg mr-3`}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M19.5 8.5a2.5 2.5 0 0 0-2.5-2.5h-3a2.5 2.5 0 0 0-2.5 2.5v1"></path>
-                          <path d="M16.5 8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"></path>
-                          <path d="M19.5 15.5a2.5 2.5 0 0 0-2.5-2.5h-9a2.5 2.5 0 0 0-2.5 2.5v1"></path>
-                          <path d="M10 15.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"></path>
-                        </svg>
+                      <div className={`${plan.iconColor} bg-gray-800/80 p-3 rounded-xl mr-3 backdrop-blur-sm border border-gray-700/30`}>
+                        <plan.Icon />
                       </div>
                       <h4 className="text-lg font-medium text-white">{plan.name}</h4>
                     </div>
