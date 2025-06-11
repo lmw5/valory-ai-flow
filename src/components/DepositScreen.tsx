@@ -23,8 +23,17 @@ const DepositScreen = ({ onNavigate }) => {
   };
 
   return (
-    <div className="min-h-screen pb-20 pt-8 px-6">
+    <div className="min-h-screen pb-20 pt-8 px-6 bg-gradient-to-br from-gray-900 via-black to-gray-800">
       <div className="max-w-md mx-auto space-y-8">
+        {/* Logo centralizada no topo */}
+        <div className="w-full text-center">
+          <img 
+            src="/lovable-uploads/1f64d410-38da-465b-8d6e-6f4a48bf670d.png" 
+            alt="Valory X" 
+            className="h-12 w-auto mx-auto mb-6"
+          />
+        </div>
+
         {/* Header with back button */}
         <div className="flex items-center space-x-4">
           <button

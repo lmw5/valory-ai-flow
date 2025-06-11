@@ -47,15 +47,16 @@ const AuthScreen = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gradient-to-br from-gray-900 via-black to-gray-800">
-      <div className="w-full max-w-md space-y-8 animate-fade-in">
-        {/* Logo */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-light tracking-wide text-white mb-2">
-            Valory <span className="text-green-400 font-medium">X</span>
-          </h1>
-          <div className="w-16 h-1 bg-gradient-to-r from-green-400 to-blue-500 mx-auto rounded-full"></div>
-        </div>
+      {/* Logo centralizada no topo */}
+      <div className="w-full text-center mb-8">
+        <img 
+          src="/lovable-uploads/1f64d410-38da-465b-8d6e-6f4a48bf670d.png" 
+          alt="Valory X" 
+          className="h-16 w-auto mx-auto"
+        />
+      </div>
 
+      <div className="w-full max-w-md space-y-8 animate-fade-in">
         {/* Auth Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="text-center mb-6">
