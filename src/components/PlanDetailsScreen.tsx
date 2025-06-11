@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -31,6 +30,11 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
     }).format(value);
   };
 
+  const handleGoBack = () => {
+    console.log('Botão de voltar clicado');
+    onNavigate('dashboard');
+  };
+
   const handleConfirm = () => {
     if (balance >= plan.investment) {
       // Usuário tem saldo suficiente - implementar lógica de contratação do plano
@@ -48,8 +52,9 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
         {/* Header com botão de voltar */}
         <div className="flex items-center space-x-4">
           <button
-            onClick={() => onNavigate('dashboard')}
-            className="p-2 rounded-full bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:bg-gray-700/50 transition-all duration-300 hover:scale-110"
+            onClick={handleGoBack}
+            className="p-2 rounded-full bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:bg-gray-700/50 transition-all duration-300 hover:scale-110 active:scale-95"
+            type="button"
           >
             <ArrowLeft className="w-5 h-5 text-gray-300" />
           </button>
