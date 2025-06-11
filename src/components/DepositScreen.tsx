@@ -35,14 +35,18 @@ const DepositScreen = ({ onNavigate }) => {
         </div>
 
         {/* Header with back button */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center justify-between">
           <button
             onClick={() => onNavigate('dashboard')}
             className="p-2 rounded-full bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:bg-gray-700/50 transition-colors"
           >
             <ArrowLeft className="w-5 h-5 text-gray-300" />
           </button>
-          <h1 className="text-xl font-medium text-white">Depósito via Pix</h1>
+          <h1 className="text-2xl font-light text-white text-center flex-1">
+            Depósito via Pix
+          </h1>
+          {/* Invisible spacer to balance the layout */}
+          <div className="w-10 h-10"></div>
         </div>
 
         {/* Description section without the V icon */}
