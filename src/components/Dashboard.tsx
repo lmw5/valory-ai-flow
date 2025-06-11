@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, CoinsIcon, Check } from 'lucide-react';
+import { ArrowRight, CoinsIcon } from 'lucide-react';
 
 const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) => {
   const investmentPlans = [
@@ -55,12 +56,6 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
       title: 'Retirar Dinheiro',
       icon: CoinsIcon,
       action: () => onNavigate('withdraw')
-    },
-    {
-      id: 'checklist',
-      title: 'Checklist',
-      icon: Check,
-      action: () => onNavigate('tasks')
     }
   ];
 
@@ -95,7 +90,7 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
 
         {/* Quick Actions Menu */}
         <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {quickActions.map((action) => (
               <button
                 key={action.id}
