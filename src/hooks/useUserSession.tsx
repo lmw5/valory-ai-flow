@@ -148,7 +148,7 @@ export const useUserSession = () => {
         return false;
       }
 
-      // Add investment record using raw query since table is not in types yet
+      // Add investment record
       const { error: investmentError } = await supabase
         .from('user_investments' as any)
         .insert({
@@ -166,9 +166,20 @@ export const useUserSession = () => {
         return false;
       }
 
-      // Update user balance
+      // Update user balance by deducting the investment amount
       const newBalance = session.balance - planData.investment_amount;
-      await updateBalance(newBalance);
+      const { error: balanceError } = await supabase
+        .from('user_sessions')
+        .update({ balance: newBalance })
+        .eq('user_id', user.id);
+
+      if (balanceError) {
+        console.error('Error updating balance:', balanceError);
+        return false;
+      }
+
+      // Update local state
+      setSession(prev => prev ? { ...prev, balance: newBalance } : null);
 
       return true;
     } catch (error) {

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -36,36 +35,46 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
   };
 
   const handleGoBack = () => {
-    console.log('Botão de voltar clicado');
+    console.log('Botão de voltar clicado - navegando para dashboard');
     onNavigate('dashboard');
   };
 
   const handleConfirm = async () => {
+    console.log('Iniciando processo de contratação do plano:', plan.name);
+    console.log('Saldo atual:', balance, 'Valor do plano:', plan.investment);
+    
     if (balance >= plan.investment) {
       setIsProcessing(true);
       
-      const success = await addInvestment({
-        plan_id: plan.id,
-        plan_name: plan.name,
-        investment_amount: plan.investment,
-        daily_return: plan.dailyReturn,
-        validity_days: plan.validity
-      });
+      try {
+        const success = await addInvestment({
+          plan_id: plan.id,
+          plan_name: plan.name,
+          investment_amount: plan.investment,
+          daily_return: plan.dailyReturn,
+          validity_days: plan.validity
+        });
 
-      setIsProcessing(false);
+        setIsProcessing(false);
 
-      if (success) {
-        setShowSuccessDialog(true);
-      } else {
-        console.error('Erro ao contratar plano');
+        if (success) {
+          console.log('Plano contratado com sucesso!');
+          setShowSuccessDialog(true);
+        } else {
+          console.error('Erro ao contratar plano - falha na transação');
+        }
+      } catch (error) {
+        console.error('Erro ao contratar plano:', error);
+        setIsProcessing(false);
       }
     } else {
-      // Saldo insuficiente - mostrar popup de erro
+      console.log('Saldo insuficiente - mostrando dialog de erro');
       setShowInsufficientBalanceDialog(true);
     }
   };
 
   const handleSuccessClose = () => {
+    console.log('Fechando dialog de sucesso e retornando ao dashboard');
     setShowSuccessDialog(false);
     onNavigate('dashboard');
   };

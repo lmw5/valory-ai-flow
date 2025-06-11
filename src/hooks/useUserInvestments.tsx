@@ -46,30 +46,21 @@ export const useUserInvestments = () => {
     if (!user) return;
 
     try {
-      // Using raw query since the table is not in types yet
+      // Direct query to user_investments table
       const { data, error } = await supabase
-        .rpc('get_user_investments', { user_id_input: user.id })
-        .returns<UserInvestment[]>();
+        .from('user_investments' as any)
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching investments:', error);
-        // If RPC doesn't exist, try direct query (will work once types are updated)
-        const { data: directData, error: directError } = await supabase
-          .from('user_investments' as any)
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-
-        if (directError) {
-          console.error('Error with direct query:', directError);
-          setInvestments([]);
-        } else {
-          setInvestments(directData || []);
-          calculateSummary(directData || []);
-        }
+        setInvestments([]);
+        setSummary({ activePlans: 0, dailyIncome: 0, totalRevenue: 0 });
       } else {
-        setInvestments(data || []);
-        calculateSummary(data || []);
+        const investmentData = data || [];
+        setInvestments(investmentData);
+        calculateSummary(investmentData);
       }
     } catch (error) {
       console.error('Error fetching investments:', error);
@@ -116,7 +107,6 @@ export const useUserInvestments = () => {
     if (!user) return false;
 
     try {
-      // Using raw query since the table is not in types yet
       const { error } = await supabase
         .from('user_investments' as any)
         .insert({
