@@ -133,6 +133,50 @@ export const useUserSession = () => {
     }
   };
 
+  const addInvestment = async (planData: {
+    plan_id: string;
+    plan_name: string;
+    investment_amount: number;
+    daily_return: number;
+    validity_days: number;
+  }) => {
+    if (!user || !session) return false;
+
+    try {
+      // Check if user has enough balance
+      if (session.balance < planData.investment_amount) {
+        return false;
+      }
+
+      // Add investment record
+      const { error: investmentError } = await supabase
+        .from('user_investments')
+        .insert({
+          user_id: user.id,
+          plan_id: planData.plan_id,
+          plan_name: planData.plan_name,
+          investment_amount: planData.investment_amount,
+          daily_return: planData.daily_return,
+          validity_days: planData.validity_days,
+          start_date: new Date().toISOString()
+        });
+
+      if (investmentError) {
+        console.error('Error adding investment:', investmentError);
+        return false;
+      }
+
+      // Update user balance
+      const newBalance = session.balance - planData.investment_amount;
+      await updateBalance(newBalance);
+
+      return true;
+    } catch (error) {
+      console.error('Error adding investment:', error);
+      return false;
+    }
+  };
+
   return {
     session,
     profile,
@@ -140,6 +184,7 @@ export const useUserSession = () => {
     loading,
     updateBalance,
     addAchievement,
+    addInvestment,
     refetch: fetchUserData
   };
 };

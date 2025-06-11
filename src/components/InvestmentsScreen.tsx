@@ -1,18 +1,14 @@
 
 import React from 'react';
 import { ArrowLeft, TrendingUp, Calendar, DollarSign } from 'lucide-react';
+import { useUserInvestments } from '@/hooks/useUserInvestments';
 
 interface InvestmentsScreenProps {
   onNavigate?: (screen: string) => void;
 }
 
 const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
-  // Dados de exemplo - em uma implementação real, viriam do hook useUserSession
-  const investmentData = {
-    activePlans: 3,
-    dailyIncome: 570.00,
-    totalRevenue: 14200.00
-  };
+  const { summary, loading } = useUserInvestments();
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -25,25 +21,30 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
     {
       id: 'products',
       title: 'Produtos',
-      value: `${investmentData.activePlans} Planos`,
-      icon: TrendingUp,
-      color: 'from-blue-600 to-blue-700'
+      value: `${summary.activePlans} Planos`,
+      icon: TrendingUp
     },
     {
       id: 'daily',
       title: 'Renda Diária',
-      value: `${formatCurrency(investmentData.dailyIncome)}/dia`,
-      icon: Calendar,
-      color: 'from-green-600 to-green-700'
+      value: `${formatCurrency(summary.dailyIncome)}/dia`,
+      icon: Calendar
     },
     {
       id: 'total',
       title: 'Renda Total',
-      value: formatCurrency(investmentData.totalRevenue),
-      icon: DollarSign,
-      color: 'from-purple-600 to-purple-700'
+      value: formatCurrency(summary.totalRevenue),
+      icon: DollarSign
     }
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pb-20 pt-8 px-6 bg-gradient-to-br from-gray-900 via-black to-gray-800 flex items-center justify-center">
+        <div className="text-white text-xl">Carregando investimentos...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-20 pt-8 px-6 bg-gradient-to-br from-gray-900 via-black to-gray-800">
@@ -79,7 +80,7 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
             return (
               <div 
                 key={box.id}
-                className={`bg-gradient-to-r ${box.color} rounded-2xl p-6 backdrop-blur-sm border border-gray-600/20 shadow-xl hover:scale-[1.02] transition-all duration-300`}
+                className="bg-gradient-to-r from-gray-700 to-gray-800 rounded-2xl p-6 backdrop-blur-sm border border-gray-600/20 shadow-xl hover:scale-[1.02] transition-all duration-300"
                 style={{
                   animationDelay: `${index * 0.1}s`,
                   animation: 'fade-in 0.6s ease-out forwards'
@@ -113,20 +114,20 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
           <div className="space-y-3 text-gray-300 text-sm">
             <div className="flex justify-between items-center py-2 border-b border-gray-700/50">
               <span>Planos Ativos:</span>
-              <span className="text-blue-400 font-medium">{investmentData.activePlans}</span>
+              <span className="text-blue-400 font-medium">{summary.activePlans}</span>
             </div>
             
             <div className="flex justify-between items-center py-2 border-b border-gray-700/50">
               <span>Rendimento Diário:</span>
               <span className="text-green-400 font-medium">
-                {formatCurrency(investmentData.dailyIncome)}
+                {formatCurrency(summary.dailyIncome)}
               </span>
             </div>
             
             <div className="flex justify-between items-center py-2">
               <span>Total Acumulado:</span>
               <span className="text-purple-400 font-medium text-lg">
-                {formatCurrency(investmentData.totalRevenue)}
+                {formatCurrency(summary.totalRevenue)}
               </span>
             </div>
           </div>
@@ -135,7 +136,10 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
         {/* Investment Note */}
         <div className="text-center pt-4">
           <p className="text-xs text-gray-500 leading-relaxed">
-            📈 Valores atualizados em tempo real
+            {summary.activePlans === 0 ? 
+              "🚀 Comece investindo em nossos planos para ver seus rendimentos aqui" :
+              "📈 Valores atualizados em tempo real"
+            }
           </p>
         </div>
       </div>

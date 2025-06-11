@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { useUserSession } from '@/hooks/useUserSession';
 
 interface PlanDetailsScreenProps {
   plan: {
@@ -22,6 +24,9 @@ interface PlanDetailsScreenProps {
 
 const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps) => {
   const [showInsufficientBalanceDialog, setShowInsufficientBalanceDialog] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { addInvestment } = useUserSession();
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -35,15 +40,34 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
     onNavigate('dashboard');
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (balance >= plan.investment) {
-      // Usuário tem saldo suficiente - implementar lógica de contratação do plano
-      console.log('Plano contratado com sucesso!');
-      onNavigate('dashboard');
+      setIsProcessing(true);
+      
+      const success = await addInvestment({
+        plan_id: plan.id,
+        plan_name: plan.name,
+        investment_amount: plan.investment,
+        daily_return: plan.dailyReturn,
+        validity_days: plan.validity
+      });
+
+      setIsProcessing(false);
+
+      if (success) {
+        setShowSuccessDialog(true);
+      } else {
+        console.error('Erro ao contratar plano');
+      }
     } else {
       // Saldo insuficiente - mostrar popup de erro
       setShowInsufficientBalanceDialog(true);
     }
+  };
+
+  const handleSuccessClose = () => {
+    setShowSuccessDialog(false);
+    onNavigate('dashboard');
   };
 
   return (
@@ -127,9 +151,10 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
         <div className="pt-4">
           <Button 
             onClick={handleConfirm}
-            className="w-full h-14 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+            disabled={isProcessing}
+            className="w-full h-14 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] disabled:opacity-50"
           >
-            Confirmar
+            {isProcessing ? 'Processando...' : 'Confirmar'}
           </Button>
         </div>
 
@@ -179,6 +204,44 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
               className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-xl h-12"
             >
               Entendi
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Sucesso */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="bg-gray-900 border border-gray-700 text-white max-w-sm mx-auto rounded-2xl">
+          <DialogHeader className="text-center space-y-6">
+            <div className="flex justify-center">
+              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">✓</span>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <DialogTitle className="text-xl font-medium text-white text-center">
+                Plano Contratado!
+              </DialogTitle>
+              <DialogDescription className="text-gray-400 text-center">
+                Seu investimento foi realizado com sucesso
+              </DialogDescription>
+            </div>
+          </DialogHeader>
+          
+          <div className="space-y-6 pt-2">
+            <div className="text-center space-y-4">
+              <p className="text-gray-300 text-sm">
+                Parabéns! Você contratou o <span className="text-white font-medium">{plan.name}</span> e já começou a gerar renda diária.
+              </p>
+            </div>
+            
+            <Button 
+              onClick={handleSuccessClose}
+              className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-medium rounded-xl h-12"
+            >
+              Continuar
             </Button>
           </div>
         </DialogContent>
