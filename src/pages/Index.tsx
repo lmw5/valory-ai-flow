@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserSession } from '@/hooks/useUserSession';
@@ -79,7 +78,7 @@ const Index = () => {
           handleTaskComplete(earnings, 'Tarefa Automatizada');
         }} />;
       case 'withdraw':
-        return <WithdrawScreen balance={session?.balance || 0} />;
+        return <WithdrawScreen balance={session?.balance || 0} onNavigate={setCurrentScreen} />;
       case 'deposit':
         return <DepositScreen onNavigate={setCurrentScreen} />;
       case 'help':
