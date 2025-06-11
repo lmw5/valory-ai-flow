@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserSession } from '@/hooks/useUserSession';
@@ -6,6 +7,7 @@ import LandingPage from '../components/LandingPage';
 import Dashboard from '../components/Dashboard';
 import InvestmentsScreen from '../components/InvestmentsScreen';
 import DepositScreen from '../components/DepositScreen';
+import WithdrawScreen from '../components/WithdrawScreen';
 import HelpScreen from '../components/HelpScreen';
 import BottomNavigation from '../components/BottomNavigation';
 
@@ -74,6 +76,11 @@ const Index = () => {
         return <InvestmentsScreen onNavigate={setCurrentScreen} />;
       case 'deposit':
         return <DepositScreen onNavigate={setCurrentScreen} />;
+      case 'withdraw':
+        return <WithdrawScreen 
+          balance={session?.balance || 0} 
+          onNavigate={setCurrentScreen} 
+        />;
       case 'help':
         return <HelpScreen />;
       default:
