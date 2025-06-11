@@ -9,12 +9,14 @@ import InvestmentsScreen from '../components/InvestmentsScreen';
 import DepositScreen from '../components/DepositScreen';
 import WithdrawScreen from '../components/WithdrawScreen';
 import HelpScreen from '../components/HelpScreen';
+import PlanDetailsScreen from '../components/PlanDetailsScreen';
 import BottomNavigation from '../components/BottomNavigation';
 
 const Index = () => {
   const { user, loading: authLoading } = useAuth();
   const { session, profile, completedTasks, loading: sessionLoading, updateBalance, addAchievement } = useUserSession();
   const [currentScreen, setCurrentScreen] = useState('dashboard');
+  const [selectedPlan, setSelectedPlan] = useState(null);
   const [showLanding, setShowLanding] = useState(!user);
 
   // Show loading while checking auth state
@@ -62,6 +64,16 @@ const Index = () => {
     setCurrentScreen('dashboard');
   };
 
+  const handleNavigate = (screen: string, data?: any) => {
+    if (screen === 'plan-details' && data) {
+      setSelectedPlan(data);
+      setCurrentScreen('plan-details');
+    } else {
+      setCurrentScreen(screen);
+      setSelectedPlan(null);
+    }
+  };
+
   const renderScreen = () => {
     switch (currentScreen) {
       case 'dashboard':
@@ -70,26 +82,42 @@ const Index = () => {
           balance={session?.balance || 0} 
           completedTasks={completedTasks}
           totalEarned={session?.total_earned || 0}
-          onNavigate={setCurrentScreen} 
+          onNavigate={handleNavigate} 
         />;
       case 'investments':
-        return <InvestmentsScreen onNavigate={setCurrentScreen} />;
+        return <InvestmentsScreen onNavigate={handleNavigate} />;
       case 'deposit':
-        return <DepositScreen onNavigate={setCurrentScreen} />;
+        return <DepositScreen onNavigate={handleNavigate} />;
       case 'withdraw':
         return <WithdrawScreen 
           balance={session?.balance || 0} 
-          onNavigate={setCurrentScreen} 
+          onNavigate={handleNavigate} 
         />;
       case 'help':
         return <HelpScreen />;
+      case 'plan-details':
+        return selectedPlan ? (
+          <PlanDetailsScreen 
+            plan={selectedPlan}
+            balance={session?.balance || 0}
+            onNavigate={handleNavigate}
+          />
+        ) : (
+          <Dashboard 
+            user={profile} 
+            balance={session?.balance || 0} 
+            completedTasks={completedTasks}
+            totalEarned={session?.total_earned || 0}
+            onNavigate={handleNavigate} 
+          />
+        );
       default:
         return <Dashboard 
           user={profile} 
           balance={session?.balance || 0} 
           completedTasks={completedTasks}
           totalEarned={session?.total_earned || 0}
-          onNavigate={setCurrentScreen} 
+          onNavigate={handleNavigate} 
         />;
     }
   };
@@ -97,10 +125,12 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
       {renderScreen()}
-      <BottomNavigation 
-        currentScreen={currentScreen} 
-        onNavigate={setCurrentScreen} 
-      />
+      {currentScreen !== 'plan-details' && (
+        <BottomNavigation 
+          currentScreen={currentScreen} 
+          onNavigate={handleNavigate} 
+        />
+      )}
     </div>
   );
 };

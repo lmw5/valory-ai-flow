@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -64,6 +63,10 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
       action: () => onNavigate('tasks')
     }
   ];
+
+  const handlePlanActivation = (plan) => {
+    onNavigate('plan-details', plan);
+  };
 
   return (
     <div className="min-h-screen pb-20 pt-8 px-6">
@@ -154,6 +157,7 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
                   </div>
                   
                   <Button 
+                    onClick={() => handlePlanActivation(plan)}
                     className={`w-full h-12 bg-gradient-to-r ${plan.buttonColor} text-white font-medium rounded-xl text-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] mt-2`}
                   >
                     Ativar agora
