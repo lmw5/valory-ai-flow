@@ -45,11 +45,8 @@ const DepositScreen = ({ onNavigate }) => {
           <h1 className="text-xl font-medium text-white">Depósito via Pix</h1>
         </div>
 
-        {/* Logo section - placeholder for now */}
+        {/* Description section without the V icon */}
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 mx-auto bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-500/30">
-            <span className="text-2xl font-bold text-blue-400">V</span>
-          </div>
           <p className="text-gray-300 text-center leading-relaxed px-4">
             Escolha um valor e gere seu depósito Pix de forma rápida e segura
           </p>
