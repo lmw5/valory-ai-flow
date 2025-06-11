@@ -139,31 +139,39 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
       {/* Dialog de Saldo Insuficiente */}
       <Dialog open={showInsufficientBalanceDialog} onOpenChange={setShowInsufficientBalanceDialog}>
         <DialogContent className="bg-gray-900 border border-gray-700 text-white max-w-sm mx-auto rounded-2xl">
-          <DialogHeader className="text-center space-y-4">
-            <div className="mx-auto w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
-              <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">!</span>
+          <DialogHeader className="text-center space-y-6">
+            <div className="flex justify-center">
+              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">!</span>
+                </div>
               </div>
             </div>
-            <DialogTitle className="text-xl font-medium text-white">
-              Saldo Insuficiente
-            </DialogTitle>
-            <DialogDescription className="text-gray-400 text-center">
-              Você precisa de saldo para realizar a compra
-            </DialogDescription>
+            <div className="space-y-2">
+              <DialogTitle className="text-xl font-medium text-white text-center">
+                Saldo Insuficiente
+              </DialogTitle>
+              <DialogDescription className="text-gray-400 text-center">
+                Você precisa de saldo para realizar a compra
+              </DialogDescription>
+            </div>
           </DialogHeader>
           
-          <div className="space-y-4 pt-4">
-            <div className="text-center space-y-2">
-              <p className="text-gray-400 text-sm">Valor necessário:</p>
-              <p className="text-white font-medium text-lg">{formatCurrency(plan.investment)}</p>
-              <p className="text-gray-400 text-sm">Seu saldo atual:</p>
-              <p className="text-red-400 font-medium text-lg">{formatCurrency(balance)}</p>
+          <div className="space-y-6 pt-2">
+            <div className="text-center space-y-4">
+              <div className="space-y-1">
+                <p className="text-gray-400 text-sm">Valor necessário:</p>
+                <p className="text-white font-medium text-lg">{formatCurrency(plan.investment)}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-gray-400 text-sm">Seu saldo atual:</p>
+                <p className="text-red-400 font-medium text-lg">{formatCurrency(balance)}</p>
+              </div>
             </div>
             
             <Button 
               onClick={() => setShowInsufficientBalanceDialog(false)}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-xl"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-xl h-12"
             >
               Entendi
             </Button>
