@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -79,8 +80,8 @@ const WithdrawScreen = ({ balance, onNavigate }: WithdrawScreenProps) => {
             
             <div className="space-y-4">
               {/* Tipo de Chave Pix */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-gray-300 block">
                   Tipo de Chave Pix
                 </label>
                 <Select value={pixKeyType} onValueChange={setPixKeyType}>
@@ -97,8 +98,8 @@ const WithdrawScreen = ({ balance, onNavigate }: WithdrawScreenProps) => {
               </div>
 
               {/* Nome do Titular */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-gray-300 block">
                   Nome do Titular
                 </label>
                 <Input
@@ -111,8 +112,8 @@ const WithdrawScreen = ({ balance, onNavigate }: WithdrawScreenProps) => {
               </div>
 
               {/* Chave Pix */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-gray-300 block">
                   Chave Pix
                 </label>
                 <Input
@@ -125,8 +126,8 @@ const WithdrawScreen = ({ balance, onNavigate }: WithdrawScreenProps) => {
               </div>
 
               {/* Valor */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-300">
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-gray-300 block">
                   Valor
                 </label>
                 <Input
@@ -139,7 +140,7 @@ const WithdrawScreen = ({ balance, onNavigate }: WithdrawScreenProps) => {
                   className="h-12 bg-gray-700/50 border-gray-600/50 text-white rounded-xl placeholder:text-gray-500 focus:border-blue-500/50"
                 />
                 {numericAmount > 0 && (
-                  <div className="text-xs text-gray-400 space-y-1">
+                  <div className="text-xs text-gray-400 space-y-1 text-left">
                     <p>Taxa (10%): R$ {formatCurrency(fee)}</p>
                     <p className="text-green-400 font-medium">Valor a receber: R$ {formatCurrency(finalAmount)}</p>
                   </div>
@@ -150,7 +151,7 @@ const WithdrawScreen = ({ balance, onNavigate }: WithdrawScreenProps) => {
             {/* Validation Messages */}
             {amount && numericAmount < minimumAmount && (
               <div className="mt-4 p-3 bg-orange-500/10 border border-orange-500/30 rounded-xl">
-                <p className="text-orange-400 text-sm">
+                <p className="text-orange-400 text-sm text-left">
                   Valor mínimo para saque: R$ {formatCurrency(minimumAmount)}
                 </p>
               </div>
@@ -158,7 +159,7 @@ const WithdrawScreen = ({ balance, onNavigate }: WithdrawScreenProps) => {
 
             {amount && numericAmount > balance && (
               <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
-                <p className="text-red-400 text-sm">
+                <p className="text-red-400 text-sm text-left">
                   Valor não pode ser maior que o saldo disponível
                 </p>
               </div>
@@ -181,10 +182,10 @@ const WithdrawScreen = ({ balance, onNavigate }: WithdrawScreenProps) => {
 
         {/* Instructions */}
         <div className="bg-gray-800/50 rounded-3xl p-6 backdrop-blur-sm border border-gray-600/30">
-          <h3 className="text-lg font-bold text-white mb-4">
+          <h3 className="text-lg font-bold text-white mb-4 text-center">
             Instruções de Retirada
           </h3>
-          <div className="space-y-3 text-gray-300 text-sm leading-relaxed">
+          <div className="space-y-3 text-gray-300 text-sm leading-relaxed text-left">
             <div className="flex items-start space-x-3">
               <span className="text-blue-400 mt-1">•</span>
               <p>O valor mínimo de saque é R$ 250,00</p>
