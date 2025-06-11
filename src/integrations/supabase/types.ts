@@ -159,9 +159,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_daily_profits: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       sanitize_user_input: {
         Args: { input_text: string }
         Returns: string
+      }
+      trigger_daily_profits: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
       validate_text_input: {
         Args: { input_text: string; max_length?: number }
