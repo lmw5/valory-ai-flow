@@ -1,12 +1,11 @@
 
 import React from 'react';
-import { Home, CheckSquare, Wallet, HelpCircle } from 'lucide-react';
+import { Home, TrendingUp, HelpCircle } from 'lucide-react';
 
 const BottomNavigation = ({ currentScreen, onNavigate }) => {
   const navItems = [
     { id: 'dashboard', icon: Home, label: 'Início' },
-    { id: 'tasks', icon: CheckSquare, label: 'Tarefas' },
-    { id: 'withdraw', icon: Wallet, label: 'Saque' },
+    { id: 'investments', icon: TrendingUp, label: 'Investimentos' },
     { id: 'help', icon: HelpCircle, label: 'Ajuda' }
   ];
 

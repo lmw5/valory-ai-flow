@@ -4,8 +4,7 @@ import { useUserSession } from '@/hooks/useUserSession';
 import AuthScreen from '../components/AuthScreen';
 import LandingPage from '../components/LandingPage';
 import Dashboard from '../components/Dashboard';
-import TasksScreen from '../components/TasksScreen';
-import WithdrawScreen from '../components/WithdrawScreen';
+import InvestmentsScreen from '../components/InvestmentsScreen';
 import DepositScreen from '../components/DepositScreen';
 import HelpScreen from '../components/HelpScreen';
 import BottomNavigation from '../components/BottomNavigation';
@@ -71,14 +70,8 @@ const Index = () => {
           totalEarned={session?.total_earned || 0}
           onNavigate={setCurrentScreen} 
         />;
-      case 'tasks':
-        return <TasksScreen onTaskComplete={(earnings) => {
-          // We need to get the task title from the TasksScreen component
-          // For now, we'll use a generic title
-          handleTaskComplete(earnings, 'Tarefa Automatizada');
-        }} />;
-      case 'withdraw':
-        return <WithdrawScreen balance={session?.balance || 0} onNavigate={setCurrentScreen} />;
+      case 'investments':
+        return <InvestmentsScreen onNavigate={setCurrentScreen} />;
       case 'deposit':
         return <DepositScreen onNavigate={setCurrentScreen} />;
       case 'help':
