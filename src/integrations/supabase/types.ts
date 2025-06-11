@@ -71,6 +71,45 @@ export type Database = {
           },
         ]
       }
+      user_investments: {
+        Row: {
+          created_at: string
+          daily_return: number
+          id: string
+          investment_amount: number
+          plan_id: string
+          plan_name: string
+          start_date: string
+          updated_at: string
+          user_id: string
+          validity_days: number
+        }
+        Insert: {
+          created_at?: string
+          daily_return: number
+          id?: string
+          investment_amount: number
+          plan_id: string
+          plan_name: string
+          start_date?: string
+          updated_at?: string
+          user_id: string
+          validity_days: number
+        }
+        Update: {
+          created_at?: string
+          daily_return?: number
+          id?: string
+          investment_amount?: number
+          plan_id?: string
+          plan_name?: string
+          start_date?: string
+          updated_at?: string
+          user_id?: string
+          validity_days?: number
+        }
+        Relationships: []
+      }
       user_sessions: {
         Row: {
           balance: number

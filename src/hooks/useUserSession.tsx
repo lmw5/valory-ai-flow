@@ -148,9 +148,9 @@ export const useUserSession = () => {
         return false;
       }
 
-      // Add investment record
+      // Add investment record using raw query since table is not in types yet
       const { error: investmentError } = await supabase
-        .from('user_investments')
+        .from('user_investments' as any)
         .insert({
           user_id: user.id,
           plan_id: planData.plan_id,

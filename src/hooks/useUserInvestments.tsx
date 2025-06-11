@@ -13,6 +13,7 @@ interface UserInvestment {
   validity_days: number;
   start_date: string;
   created_at: string;
+  updated_at: string;
 }
 
 interface InvestmentSummary {
@@ -45,20 +46,35 @@ export const useUserInvestments = () => {
     if (!user) return;
 
     try {
+      // Using raw query since the table is not in types yet
       const { data, error } = await supabase
-        .from('user_investments')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .rpc('get_user_investments', { user_id_input: user.id })
+        .returns<UserInvestment[]>();
 
       if (error) {
         console.error('Error fetching investments:', error);
+        // If RPC doesn't exist, try direct query (will work once types are updated)
+        const { data: directData, error: directError } = await supabase
+          .from('user_investments' as any)
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (directError) {
+          console.error('Error with direct query:', directError);
+          setInvestments([]);
+        } else {
+          setInvestments(directData || []);
+          calculateSummary(directData || []);
+        }
       } else {
         setInvestments(data || []);
         calculateSummary(data || []);
       }
     } catch (error) {
       console.error('Error fetching investments:', error);
+      setInvestments([]);
+      setSummary({ activePlans: 0, dailyIncome: 0, totalRevenue: 0 });
     } finally {
       setLoading(false);
     }
@@ -78,8 +94,8 @@ export const useUserInvestments = () => {
 
       if (validDays >= 0 && daysPassed <= investment.validity_days) {
         activePlansCount++;
-        totalDailyIncome += investment.daily_return;
-        totalRevenue += investment.daily_return * validDays;
+        totalDailyIncome += Number(investment.daily_return);
+        totalRevenue += Number(investment.daily_return) * validDays;
       }
     });
 
@@ -100,8 +116,9 @@ export const useUserInvestments = () => {
     if (!user) return false;
 
     try {
+      // Using raw query since the table is not in types yet
       const { error } = await supabase
-        .from('user_investments')
+        .from('user_investments' as any)
         .insert({
           user_id: user.id,
           plan_id: planData.plan_id,
