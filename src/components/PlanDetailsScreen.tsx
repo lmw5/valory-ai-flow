@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, DollarSign, Calendar, TrendingUp, Shield } from 'lucide-react';
+import { ArrowLeft, DollarSign, Calendar, TrendingUp, Shield, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -81,87 +81,64 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
             </div>
           </div>
 
-          {/* Plan Image */}
-          <div className="w-full mb-8">
-            <div className="aspect-[4/3] rounded-3xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-white/5 overflow-hidden backdrop-blur-sm">
-              <img
-                src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80"
-                alt="Plano de investimento"
-                className="w-full h-full object-cover opacity-70"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            </div>
-          </div>
-
           {/* Plan Title */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-semibold text-white mb-3 tracking-tight">
+            <h1 className="text-3xl font-bold text-white mb-2">
               {plan.name}
             </h1>
-            <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full" />
-          </div>
-
-          {/* Plan Description */}
-          <div className="text-center mb-8 space-y-3">
-            <p className="text-gray-300 text-lg font-light leading-relaxed">
-              Maximize seus ganhos com retornos diários garantidos
-            </p>
-            <p className="text-gray-400 text-base">
-              Investimento de <span className="text-emerald-400 font-semibold">{formatCurrency(plan.investment)}</span> 
-              {' '}com retorno diário de <span className="text-emerald-400 font-semibold">{formatCurrency(plan.dailyReturn)}</span>
+            <p className="text-gray-400 text-lg">
+              Detalhes do Plano
             </p>
           </div>
 
           {/* Investment Details Card */}
-          <Card className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl mb-6 shadow-2xl">
+          <Card className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl mb-6 shadow-2xl">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-white mb-6 flex items-center">
-                <DollarSign className="w-5 h-5 text-blue-400 mr-2" />
-                Detalhes do Investimento
-              </h3>
-
               <div className="space-y-4">
                 {/* Investment Amount */}
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-gray-400 font-medium">Investimento</span>
-                  <span className="text-white font-semibold text-lg">{formatCurrency(plan.investment)}</span>
+                <div className="flex items-center justify-between py-3">
+                  <div className="flex items-center">
+                    <DollarSign className="w-5 h-5 text-blue-400 mr-3" />
+                    <span className="text-gray-300 font-medium">Investimento</span>
+                  </div>
+                  <span className="text-white font-bold text-xl">{formatCurrency(plan.investment)}</span>
                 </div>
-                <Separator className="bg-white/5" />
+                <Separator className="bg-white/10" />
 
                 {/* Daily Return */}
-                <div className="flex items-center justify-between py-2">
+                <div className="flex items-center justify-between py-3">
                   <div className="flex items-center">
-                    <TrendingUp className="w-4 h-4 text-emerald-400 mr-2" />
-                    <span className="text-gray-400 font-medium">Renda Diária</span>
+                    <TrendingUp className="w-5 h-5 text-emerald-400 mr-3" />
+                    <span className="text-gray-300 font-medium">Renda Diária</span>
                   </div>
-                  <span className="text-emerald-400 font-semibold text-lg">{formatCurrency(plan.dailyReturn)}</span>
+                  <span className="text-emerald-400 font-bold text-xl">{formatCurrency(plan.dailyReturn)}</span>
                 </div>
-                <Separator className="bg-white/5" />
+                <Separator className="bg-white/10" />
 
                 {/* Validity Period */}
-                <div className="flex items-center justify-between py-2">
+                <div className="flex items-center justify-between py-3">
                   <div className="flex items-center">
-                    <Calendar className="w-4 h-4 text-blue-400 mr-2" />
-                    <span className="text-gray-400 font-medium">Período</span>
+                    <Calendar className="w-5 h-5 text-purple-400 mr-3" />
+                    <span className="text-gray-300 font-medium">Período</span>
                   </div>
-                  <span className="text-white font-semibold text-lg">{plan.validity} dias</span>
+                  <span className="text-white font-bold text-xl">{plan.validity} dias</span>
                 </div>
-                <Separator className="bg-white/5" />
+                <Separator className="bg-white/10" />
 
                 {/* Total Revenue */}
-                <div className="flex items-center justify-between py-3 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-2xl px-4 mt-4">
-                  <span className="text-gray-300 font-medium">Receita Total</span>
-                  <span className="text-yellow-400 font-bold text-xl">{formatCurrency(totalRevenue)}</span>
+                <div className="flex items-center justify-between py-4 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl px-4 mt-6">
+                  <span className="text-gray-300 font-medium text-lg">Receita Total</span>
+                  <span className="text-yellow-400 font-bold text-2xl">{formatCurrency(totalRevenue)}</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Current Balance */}
-          <div className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-4 mb-6">
+          <div className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-xl p-4 mb-6">
             <div className="flex items-center justify-between">
-              <span className="text-gray-400 text-sm font-medium">Saldo Disponível</span>
-              <span className="text-white font-semibold text-lg">{formatCurrency(balance)}</span>
+              <span className="text-gray-400 font-medium">Saldo Disponível</span>
+              <span className="text-white font-bold text-lg">{formatCurrency(balance)}</span>
             </div>
           </div>
 
@@ -170,7 +147,7 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
             <Button
               onClick={handleActivatePlan}
               disabled={isActivating || loading}
-              className="w-full h-16 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold rounded-2xl text-lg shadow-2xl transform transition-all duration-200 active:scale-95 hover:shadow-blue-500/25 border-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl text-lg shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isActivating || loading ? (
                 <div className="flex items-center space-x-3">
@@ -178,35 +155,55 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
                   <span>Processando...</span>
                 </div>
               ) : (
-                'Confirmar'
+                'Confirmar Investimento'
               )}
             </Button>
 
             {/* Security Notice */}
-            <p className="text-xs text-gray-500 text-center leading-relaxed px-4">
-              🔒 Transação protegida com criptografia de ponta a ponta e validação de segurança
+            <p className="text-xs text-gray-500 text-center">
+              🔒 Transação protegida com criptografia de ponta a ponta
             </p>
           </div>
         </div>
       </div>
 
-      {/* Insufficient Balance Dialog */}
+      {/* Enhanced Insufficient Balance Dialog */}
       <AlertDialog open={showInsufficientBalanceDialog} onOpenChange={setShowInsufficientBalanceDialog}>
-        <AlertDialogContent className="bg-slate-900 border border-red-500/20 rounded-3xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-red-400 text-xl font-semibold text-center">
+        <AlertDialogContent className="bg-gradient-to-br from-slate-900 to-slate-800 border border-red-500/30 rounded-3xl max-w-sm mx-auto">
+          <AlertDialogHeader className="text-center space-y-4">
+            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-8 h-8 text-red-400" />
+            </div>
+            <AlertDialogTitle className="text-red-400 text-2xl font-bold">
               Saldo Insuficiente
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-300 text-center text-base mt-4">
-              Você precisa de saldo para realizar a compra
+            <AlertDialogDescription className="text-gray-300 text-base leading-relaxed space-y-3">
+              <p>
+                Você precisa de <span className="text-white font-semibold">{formatCurrency(plan.investment)}</span> para este investimento.
+              </p>
+              <p>
+                Saldo atual: <span className="text-red-400 font-semibold">{formatCurrency(balance)}</span>
+              </p>
+              <p>
+                Você precisa de mais <span className="text-yellow-400 font-semibold">{formatCurrency(plan.investment - balance)}</span> para realizar este investimento.
+              </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
+          <AlertDialogFooter className="flex flex-col space-y-3 pt-4">
+            <AlertDialogAction
+              onClick={() => {
+                setShowInsufficientBalanceDialog(false);
+                onNavigate('deposit');
+              }}
+              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-xl h-12 text-base"
+            >
+              Fazer Depósito
+            </AlertDialogAction>
             <AlertDialogAction
               onClick={() => setShowInsufficientBalanceDialog(false)}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl h-12"
+              className="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl h-12 text-base"
             >
-              Entendi
+              Voltar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
