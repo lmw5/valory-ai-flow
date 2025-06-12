@@ -25,36 +25,40 @@ export const useSecureInvestments = () => {
     setLoading(true);
     
     try {
-      // The database triggers will now handle all validation and balance checking
-      const { error } = await supabase
-        .from('user_investments')
-        .insert({
-          user_id: user.id,
-          plan_id: planData.plan_id,
-          plan_name: planData.plan_name,
-          investment_amount: planData.investment_amount,
-          daily_return: planData.daily_return,
-          validity_days: planData.validity_days,
-          start_date: new Date().toISOString()
-        });
+      // Use the new secure database function to create investment with balance check
+      const { data, error } = await supabase.rpc('create_investment_with_balance_check', {
+        p_user_id: user.id,
+        p_plan_id: planData.plan_id,
+        p_plan_name: planData.plan_name,
+        p_investment_amount: planData.investment_amount,
+        p_daily_return: planData.daily_return,
+        p_validity_days: planData.validity_days
+      });
 
       if (error) {
         console.error('Investment creation error:', error);
+        toast.error('Erro ao criar investimento. Tente novamente.');
+        return false;
+      }
+
+      // Check the result from the function
+      if (!data?.success) {
+        console.error('Investment creation failed:', data?.error);
         
-        // Handle specific validation errors with user-friendly messages
-        if (error.message.includes('Insufficient balance')) {
+        // Handle specific error cases with user-friendly messages
+        if (data?.error?.includes('Insufficient balance')) {
           toast.error('Saldo insuficiente para este investimento');
-        } else if (error.message.includes('Invalid investment parameters')) {
+        } else if (data?.error?.includes('Invalid investment parameters')) {
           toast.error('Parâmetros de investimento inválidos');
-        } else if (error.message.includes('Invalid plan')) {
-          toast.error('Plano de investimento inválido');
+        } else if (data?.error?.includes('User session not found')) {
+          toast.error('Sessão de usuário não encontrada');
         } else {
-          toast.error('Erro ao criar investimento. Tente novamente.');
+          toast.error(data?.error || 'Erro ao criar investimento');
         }
         return false;
       }
 
-      toast.success('Investimento criado com sucesso!');
+      toast.success(`Investimento criado com sucesso! Novo saldo: R$ ${data.new_balance?.toFixed(2)}`);
       return true;
     } catch (error) {
       console.error('Unexpected error:', error);

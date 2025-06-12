@@ -195,6 +195,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_user_earnings: {
+        Args: {
+          p_user_id: string
+          p_amount: number
+          p_description: string
+          p_source?: string
+        }
+        Returns: Json
+      }
       calculate_daily_profits: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -202,6 +211,17 @@ export type Database = {
       check_user_balance: {
         Args: { user_uuid: string; required_amount: number }
         Returns: boolean
+      }
+      create_investment_with_balance_check: {
+        Args: {
+          p_user_id: string
+          p_plan_id: string
+          p_plan_name: string
+          p_investment_amount: number
+          p_daily_return: number
+          p_validity_days: number
+        }
+        Returns: Json
       }
       detect_suspicious_investment_activity: {
         Args: { p_user_id: string }
@@ -224,6 +244,10 @@ export type Database = {
       trigger_daily_profits: {
         Args: Record<PropertyKey, never>
         Returns: Json
+      }
+      validate_balance_update: {
+        Args: { p_user_id: string; p_new_balance: number; p_reason?: string }
+        Returns: boolean
       }
       validate_investment_plan: {
         Args: {

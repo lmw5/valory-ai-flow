@@ -17,7 +17,25 @@ export const useSecureBalance = () => {
     setLoading(true);
 
     try {
-      // The database triggers will validate the balance amount
+      // First validate the balance update using our secure function
+      const { data: isValid, error: validationError } = await supabase.rpc('validate_balance_update', {
+        p_user_id: user.id,
+        p_new_balance: newBalance,
+        p_reason: reason
+      });
+
+      if (validationError) {
+        console.error('Balance validation error:', validationError);
+        toast.error('Erro ao validar atualização de saldo');
+        return false;
+      }
+
+      if (!isValid) {
+        toast.error('Atualização de saldo bloqueada por segurança');
+        return false;
+      }
+
+      // If validation passes, update the balance
       const { error } = await supabase
         .from('user_sessions')
         .update({ 
@@ -29,7 +47,9 @@ export const useSecureBalance = () => {
       if (error) {
         console.error('Balance update error:', error);
         
-        if (error.message.includes('Invalid balance amount')) {
+        if (error.message.includes('Suspicious balance change detected')) {
+          toast.error('Alteração de saldo suspeita detectada');
+        } else if (error.message.includes('Invalid balance amount')) {
           toast.error('Valor de saldo inválido');
         } else {
           toast.error('Erro ao atualizar saldo');
@@ -51,55 +71,31 @@ export const useSecureBalance = () => {
     if (!user) return false;
 
     try {
-      // Get current session
-      const { data: session, error: sessionError } = await supabase
-        .from('user_sessions')
-        .select('balance, total_earned')
-        .eq('user_id', user.id)
-        .single();
+      // Use the new secure function to add earnings
+      const { data, error } = await supabase.rpc('add_user_earnings', {
+        p_user_id: user.id,
+        p_amount: amount,
+        p_description: description,
+        p_source: 'task_completion'
+      });
 
-      if (sessionError || !session) {
-        toast.error('Erro ao buscar dados da sessão');
+      if (error) {
+        console.error('Error adding earnings:', error);
+        toast.error('Erro ao adicionar ganhos');
         return false;
       }
 
-      // Update balance and total_earned atomically
-      const newBalance = session.balance + amount;
-      const newTotalEarned = session.total_earned + amount;
-
-      const { error: updateError } = await supabase
-        .from('user_sessions')
-        .update({ 
-          balance: newBalance,
-          total_earned: newTotalEarned,
-          updated_at: new Date().toISOString()
-        })
-        .eq('user_id', user.id);
-
-      if (updateError) {
-        console.error('Error updating earnings:', updateError);
+      if (!data?.success) {
+        console.error('Add earnings failed:', data?.error);
+        toast.error(data?.error || 'Erro ao adicionar ganhos');
         return false;
       }
 
-      // Add achievement record
-      const { error: achievementError } = await supabase
-        .from('user_achievements')
-        .insert({
-          user_id: user.id,
-          achievement_type: 'earnings',
-          achievement_name: 'Ganhos Adicionados',
-          description: description,
-          value: Math.round(amount)
-        });
-
-      if (achievementError) {
-        console.error('Error adding achievement:', achievementError);
-        // Don't fail the operation if achievement logging fails
-      }
-
+      toast.success(`Ganhos adicionados! Novo saldo: R$ ${data.new_balance?.toFixed(2)}`);
       return true;
     } catch (error) {
       console.error('Unexpected error adding earnings:', error);
+      toast.error('Erro inesperado ao adicionar ganhos');
       return false;
     }
   };

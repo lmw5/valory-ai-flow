@@ -88,7 +88,7 @@ export const useUserSession = () => {
   };
 
   const updateBalance = async (newBalance: number) => {
-    const success = await secureUpdateBalance(newBalance);
+    const success = await secureUpdateBalance(newBalance, 'Manual balance update');
     if (success) {
       // Refresh local state
       await fetchUserData();
