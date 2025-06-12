@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // Handle successful signup
         if (event === 'SIGNED_UP') {
-          toast.success('Conta criada com sucesso! Verifique seu email para confirmar.');
+          toast.success('Conta criada com sucesso! Bem-vindo! Seu saldo inicial é R$ 0,00');
         }
         
         // Handle successful signin
