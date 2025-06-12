@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -158,9 +159,6 @@ const AuthScreen = () => {
           >
             {isLogin ? 'Não tem conta? Criar uma agora' : 'Já tem conta? Fazer login'}
           </button>
-          
-          {/* Bonus Message - only show on signup */}
-          
         </div>
       </div>
     </div>

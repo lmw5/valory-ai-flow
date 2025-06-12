@@ -87,7 +87,7 @@ export const useUserSession = () => {
         setProfile(profileData);
       }
 
-      // Fetch user session with enhanced error handling
+      // Fetch user session with enhanced error handling - ZERO BALANCE ONLY
       const { data: sessionData, error: sessionError } = await supabase
         .from('user_sessions')
         .select('balance, total_earned, connection_time, is_connected, last_connection')
@@ -96,7 +96,7 @@ export const useUserSession = () => {
 
       if (sessionError) {
         console.error('Error fetching session:', sessionError);
-        // Create session if it doesn't exist - start with 0 balance for security
+        // Create session if it doesn't exist - ALWAYS start with ZERO balance
         if (sessionError.code === 'PGRST116') {
           const { error: insertError } = await supabase
             .from('user_sessions')
@@ -122,7 +122,7 @@ export const useUserSession = () => {
           toast.error('Erro ao carregar dados da sessão');
         }
       } else if (sessionData) {
-        // Validate session data before setting state
+        // Validate session data before setting state - ensure non-negative values only
         if (sessionData.balance >= 0 && sessionData.total_earned >= 0) {
           setSession(sessionData);
         } else {
@@ -153,7 +153,7 @@ export const useUserSession = () => {
   };
 
   const updateBalance = async (newBalance: number) => {
-    // Enhanced input validation
+    // Enhanced input validation - no negative balances allowed
     if (typeof newBalance !== 'number' || isNaN(newBalance) || newBalance < 0) {
       toast.error('Valor de saldo inválido');
       return false;
@@ -168,7 +168,7 @@ export const useUserSession = () => {
   };
 
   const addAchievement = async (taskTitle: string, earnings: number) => {
-    // Enhanced input validation
+    // Enhanced input validation - only positive earnings allowed
     if (!taskTitle?.trim() || typeof earnings !== 'number' || earnings <= 0) {
       toast.error('Dados de conquista inválidos');
       return false;
@@ -192,7 +192,7 @@ export const useUserSession = () => {
     daily_return: number;
     validity_days: number;
   }) => {
-    // Enhanced input validation
+    // Enhanced input validation - all values must be positive
     if (!planData.plan_id?.trim() || !planData.plan_name?.trim()) {
       toast.error('Dados do plano inválidos');
       return false;

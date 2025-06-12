@@ -44,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Handle successful signup
+        // Handle successful signup - removed any mention of initial balance
         if (event === 'SIGNED_UP') {
           toast.success('Conta criada com sucesso! Bem-vindo!');
         }
