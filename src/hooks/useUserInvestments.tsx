@@ -40,7 +40,9 @@ export const useUserInvestments = () => {
     }
 
     try {
-      // Fetch user investments
+      console.log('Fetching investments for user:', user.id);
+      
+      // Fetch user investments with better error handling
       const { data: investmentsData, error: investmentsError } = await supabase
         .from('user_investments')
         .select('*')
@@ -52,10 +54,12 @@ export const useUserInvestments = () => {
         toast.error('Erro ao carregar investimentos');
         setInvestments([]);
       } else {
+        console.log('Investments data:', investmentsData);
         setInvestments(investmentsData || []);
       }
 
-      // Get investment summary using the new function
+      // Get investment summary using the database function
+      console.log('Fetching investment summary...');
       const { data: summaryData, error: summaryError } = await supabase
         .rpc('get_user_daily_income_summary', {
           p_user_id: user.id
@@ -72,11 +76,20 @@ export const useUserInvestments = () => {
         });
       } else if (summaryData && summaryData.length > 0) {
         const data = summaryData[0];
+        console.log('Summary data:', data);
         setSummary({
           activePlans: data.active_plans || 0,
-          dailyIncome: data.daily_income || 0,
-          totalRevenue: data.total_revenue || 0,
+          dailyIncome: parseFloat(data.daily_income) || 0,
+          totalRevenue: parseFloat(data.total_revenue) || 0,
           nextPaymentDate: data.next_payment_date || new Date(Date.now() + 86400000).toISOString().split('T')[0]
+        });
+      } else {
+        console.log('No summary data found, setting to zero');
+        setSummary({
+          activePlans: 0,
+          dailyIncome: 0,
+          totalRevenue: 0,
+          nextPaymentDate: new Date(Date.now() + 86400000).toISOString().split('T')[0]
         });
       }
 
@@ -88,8 +101,95 @@ export const useUserInvestments = () => {
     }
   };
 
+  // Set up real-time subscriptions for automatic updates
   useEffect(() => {
+    if (!user) return;
+
+    console.log('Setting up real-time subscriptions for user:', user.id);
+
+    // Subscribe to changes in user_investments table
+    const investmentsChannel = supabase
+      .channel('user-investments-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_investments',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Investment change detected:', payload);
+          // Refetch data when investments change
+          fetchInvestments();
+        }
+      )
+      .subscribe();
+
+    // Subscribe to changes in user_achievements for daily profits
+    const achievementsChannel = supabase
+      .channel('user-achievements-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'user_achievements',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Achievement change detected:', payload);
+          // Check if it's a daily profit achievement
+          if (payload.new?.achievement_type === 'daily_profit') {
+            console.log('Daily profit detected, refreshing data');
+            // Refetch data when daily profits are added
+            fetchInvestments();
+          }
+        }
+      )
+      .subscribe();
+
+    // Subscribe to balance changes in user_sessions
+    const sessionChannel = supabase
+      .channel('user-session-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'user_sessions',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Session balance change detected:', payload);
+          // Refetch summary data when balance changes (could indicate daily profits)
+          fetchInvestments();
+        }
+      )
+      .subscribe();
+
+    // Initial fetch
     fetchInvestments();
+
+    // Cleanup subscriptions
+    return () => {
+      console.log('Cleaning up real-time subscriptions');
+      supabase.removeChannel(investmentsChannel);
+      supabase.removeChannel(achievementsChannel);
+      supabase.removeChannel(sessionChannel);
+    };
+  }, [user]);
+
+  // Auto-refresh every 30 seconds to ensure data stays current
+  useEffect(() => {
+    if (!user) return;
+
+    const interval = setInterval(() => {
+      console.log('Auto-refreshing investment data...');
+      fetchInvestments();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
   }, [user]);
 
   return {

@@ -16,6 +16,7 @@ interface InvestmentResponse {
   success: boolean;
   error?: string;
   new_balance?: number;
+  investment_id?: string;
 }
 
 export const useSecureInvestments = () => {
@@ -31,7 +32,9 @@ export const useSecureInvestments = () => {
     setLoading(true);
     
     try {
-      // Use the new secure database function to create investment with balance check
+      console.log('Creating investment with data:', planData);
+
+      // Use the secure database function to create investment with balance check
       const { data, error } = await supabase.rpc('create_investment_with_balance_check', {
         p_user_id: user.id,
         p_plan_id: planData.plan_id,
@@ -48,6 +51,7 @@ export const useSecureInvestments = () => {
       }
 
       const response = data as unknown as InvestmentResponse;
+      console.log('Investment creation response:', response);
 
       // Check the result from the function
       if (!response?.success) {
@@ -66,7 +70,12 @@ export const useSecureInvestments = () => {
         return false;
       }
 
-      toast.success(`Investimento criado com sucesso! Novo saldo: R$ ${response.new_balance?.toFixed(2)}`);
+      console.log('Investment created successfully:', response.investment_id);
+      toast.success(`Investimento criado com sucesso! Novo saldo: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(response.new_balance || 0)}`);
+
+      // Force a small delay to ensure database changes are propagated
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
       return true;
     } catch (error) {
       console.error('Unexpected error:', error);

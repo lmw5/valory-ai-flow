@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ArrowLeft, TrendingUp, Calendar, DollarSign, Activity, Building2, Package } from 'lucide-react';
 import { useUserInvestments } from '@/hooks/useUserInvestments';
 
@@ -8,7 +8,13 @@ interface InvestmentsScreenProps {
 }
 
 const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
-  const { investments, summary, loading } = useUserInvestments();
+  const { investments, summary, loading, refetch } = useUserInvestments();
+
+  // Refetch data when component becomes visible
+  useEffect(() => {
+    console.log('InvestmentsScreen mounted, ensuring fresh data');
+    refetch();
+  }, [refetch]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -28,6 +34,9 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
       </div>
     );
   }
+
+  console.log('Rendering InvestmentsScreen with summary:', summary);
+  console.log('Active investments:', investments.length);
 
   return (
     <div className="min-h-screen pb-20 pt-8 px-6 bg-gradient-to-br from-gray-900 via-black to-gray-800">
