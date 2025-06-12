@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -48,7 +49,7 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
     {
       id: 'impulse',
       name: 'Plano Impulse',
-      investment: 200,
+      investment: 10,
       dailyReturn: 310,
       validity: 90,
       totalRevenue: 27900,
