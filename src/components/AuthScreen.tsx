@@ -14,10 +14,40 @@ const AuthScreen = () => {
   
   const { signIn, signUp } = useAuth();
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
+    // Client-side validation
+    if (!email.trim()) {
+      setError('Email é obrigatório');
+      setLoading(false);
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError('Formato de email inválido');
+      setLoading(false);
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      setError('Senha deve ter pelo menos 6 caracteres');
+      setLoading(false);
+      return;
+    }
+
+    if (!isLogin && (!name.trim() || name.trim().length < 2)) {
+      setError('Nome deve ter pelo menos 2 caracteres');
+      setLoading(false);
+      return;
+    }
 
     try {
       if (isLogin) {
@@ -26,20 +56,16 @@ const AuthScreen = () => {
           setError(error.message);
         }
       } else {
-        if (!name.trim()) {
-          setError('Nome é obrigatório');
-          setLoading(false);
-          return;
-        }
         const { error } = await signUp(email, password, name);
         if (error) {
           setError(error.message);
         } else {
-          setError('Verifique seu email para confirmar a conta');
+          setError('');
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       setError('Ocorreu um erro inesperado');
+      console.error('Auth error:', err);
     } finally {
       setLoading(false);
     }
@@ -80,6 +106,9 @@ const AuthScreen = () => {
                 onChange={(e) => setName(e.target.value)}
                 className="h-14 bg-gray-800/50 border-gray-700 rounded-xl text-white placeholder-gray-400 text-lg backdrop-blur-sm"
                 required={!isLogin}
+                minLength={2}
+                maxLength={100}
+                disabled={loading}
               />
             )}
             
@@ -90,6 +119,7 @@ const AuthScreen = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="h-14 bg-gray-800/50 border-gray-700 rounded-xl text-white placeholder-gray-400 text-lg backdrop-blur-sm"
               required
+              disabled={loading}
             />
             
             <Input
@@ -100,6 +130,7 @@ const AuthScreen = () => {
               className="h-14 bg-gray-800/50 border-gray-700 rounded-xl text-white placeholder-gray-400 text-lg backdrop-blur-sm"
               required
               minLength={6}
+              disabled={loading}
             />
           </div>
 
@@ -119,8 +150,12 @@ const AuthScreen = () => {
             onClick={() => {
               setIsLogin(!isLogin);
               setError('');
+              setEmail('');
+              setPassword('');
+              setName('');
             }}
             className="text-blue-400 hover:text-blue-300 transition-colors text-sm"
+            disabled={loading}
           >
             {isLogin ? 'Não tem conta? Criar uma agora' : 'Já tem conta? Fazer login'}
           </button>

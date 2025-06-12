@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useSecureBalance } from './useSecureBalance';
 import { useSecureInvestments } from './useSecureInvestments';
+import { toast } from 'sonner';
 
 interface UserSession {
   balance: number;
@@ -42,33 +43,72 @@ export const useUserSession = () => {
     if (!user) return;
 
     try {
-      // Fetch user profile
+      setLoading(true);
+
+      // Fetch user profile with error handling
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('name, email')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       if (profileError) {
         console.error('Error fetching profile:', profileError);
-      } else {
+        // Create profile if it doesn't exist
+        if (profileError.code === 'PGRST116') {
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              id: user.id,
+              name: user.user_metadata?.name || 'Usuário',
+              email: user.email || ''
+            });
+          
+          if (!insertError) {
+            setProfile({
+              name: user.user_metadata?.name || 'Usuário',
+              email: user.email || ''
+            });
+          }
+        }
+      } else if (profileData) {
         setProfile(profileData);
       }
 
-      // Fetch user session
+      // Fetch user session with error handling
       const { data: sessionData, error: sessionError } = await supabase
         .from('user_sessions')
         .select('balance, total_earned, connection_time, is_connected, last_connection')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (sessionError) {
         console.error('Error fetching session:', sessionError);
-      } else {
+        // Create session if it doesn't exist
+        if (sessionError.code === 'PGRST116') {
+          const { error: insertError } = await supabase
+            .from('user_sessions')
+            .insert({
+              user_id: user.id,
+              balance: 50.00,
+              total_earned: 50.00
+            });
+          
+          if (!insertError) {
+            setSession({
+              balance: 50.00,
+              total_earned: 50.00,
+              connection_time: 0,
+              is_connected: false,
+              last_connection: null
+            });
+          }
+        }
+      } else if (sessionData) {
         setSession(sessionData);
       }
 
-      // Count completed tasks
+      // Count completed tasks with error handling
       const { count, error: countError } = await supabase
         .from('user_achievements')
         .select('*', { count: 'exact', head: true })
@@ -76,12 +116,14 @@ export const useUserSession = () => {
 
       if (countError) {
         console.error('Error counting achievements:', countError);
+        setCompletedTasks(0);
       } else {
         setCompletedTasks(count || 0);
       }
 
     } catch (error) {
       console.error('Error fetching user data:', error);
+      toast.error('Erro ao carregar dados do usuário');
     } finally {
       setLoading(false);
     }
