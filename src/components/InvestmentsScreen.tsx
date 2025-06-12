@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { ArrowLeft, TrendingUp, Calendar, DollarSign, Activity, Building2, Clock } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Calendar, DollarSign, Activity, Building2 } from 'lucide-react';
 import { useUserInvestments } from '@/hooks/useUserInvestments';
-import DailyProfitsDisplay from './DailyProfitsDisplay';
 
 interface InvestmentsScreenProps {
   onNavigate?: (screen: string) => void;
@@ -94,19 +93,6 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Daily Profits Section */}
-        <div className="space-y-4">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gray-700/50 rounded-lg">
-              <Clock className="w-5 h-5 text-gray-300" />
-            </div>
-            <h3 className="text-lg font-medium text-white">
-              Rendimentos Diários
-            </h3>
-          </div>
-          <DailyProfitsDisplay />
         </div>
 
         {/* Investment Plans */}
