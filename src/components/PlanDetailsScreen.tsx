@@ -28,6 +28,10 @@ const PlanDetailsScreen = ({ plan, onNavigate }: PlanDetailsScreenProps) => {
   };
 
   const handleActivatePlan = async () => {
+    console.log('Attempting to activate plan:', plan);
+    console.log('Current balance:', balance);
+    console.log('Required investment:', plan.investment);
+
     if (balance < plan.investment) {
       setShowInsufficientBalanceDialog(true);
       return;
@@ -36,6 +40,14 @@ const PlanDetailsScreen = ({ plan, onNavigate }: PlanDetailsScreenProps) => {
     setIsActivating(true);
 
     try {
+      console.log('Calling addInvestment with data:', {
+        plan_id: plan.id,
+        plan_name: plan.name,
+        investment_amount: plan.investment,
+        daily_return: plan.dailyReturn,
+        validity_days: plan.validity
+      });
+
       const success = await addInvestment({
         plan_id: plan.id,
         plan_name: plan.name,

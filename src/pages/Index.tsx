@@ -77,13 +77,7 @@ const Index = () => {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'dashboard':
-        return <Dashboard 
-          user={profile} 
-          balance={session?.balance || 0} 
-          completedTasks={completedTasks}
-          totalEarned={session?.total_earned || 0}
-          onNavigate={handleNavigate} 
-        />;
+        return <Dashboard onNavigate={handleNavigate} />;
       case 'investments':
         return <InvestmentsScreen onNavigate={handleNavigate} />;
       case 'deposit':
@@ -99,26 +93,13 @@ const Index = () => {
         return selectedPlan ? (
           <PlanDetailsScreen 
             plan={selectedPlan}
-            balance={session?.balance || 0}
             onNavigate={handleNavigate}
           />
         ) : (
-          <Dashboard 
-            user={profile} 
-            balance={session?.balance || 0} 
-            completedTasks={completedTasks}
-            totalEarned={session?.total_earned || 0}
-            onNavigate={handleNavigate} 
-          />
+          <Dashboard onNavigate={handleNavigate} />
         );
       default:
-        return <Dashboard 
-          user={profile} 
-          balance={session?.balance || 0} 
-          completedTasks={completedTasks}
-          totalEarned={session?.total_earned || 0}
-          onNavigate={handleNavigate} 
-        />;
+        return <Dashboard onNavigate={handleNavigate} />;
     }
   };
 
