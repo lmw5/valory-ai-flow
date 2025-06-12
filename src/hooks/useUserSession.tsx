@@ -45,7 +45,7 @@ export const useUserSession = () => {
     try {
       setLoading(true);
 
-      // Fetch user profile with error handling
+      // Fetch user profile with enhanced error handling
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('name, email')
@@ -54,28 +54,40 @@ export const useUserSession = () => {
 
       if (profileError) {
         console.error('Error fetching profile:', profileError);
-        // Create profile if it doesn't exist
+        // Create profile if it doesn't exist with enhanced validation
         if (profileError.code === 'PGRST116') {
-          const { error: insertError } = await supabase
-            .from('profiles')
-            .insert({
-              id: user.id,
-              name: user.user_metadata?.name || 'Usuário',
-              email: user.email || ''
-            });
+          const safeName = user.user_metadata?.name?.trim() || 'Usuário';
+          const safeEmail = user.email?.trim() || '';
           
-          if (!insertError) {
-            setProfile({
-              name: user.user_metadata?.name || 'Usuário',
-              email: user.email || ''
-            });
+          // Validate inputs before inserting
+          if (safeName.length <= 100 && safeEmail.length <= 255) {
+            const { error: insertError } = await supabase
+              .from('profiles')
+              .insert({
+                id: user.id,
+                name: safeName,
+                email: safeEmail
+              });
+            
+            if (!insertError) {
+              setProfile({
+                name: safeName,
+                email: safeEmail
+              });
+            } else {
+              console.error('Error creating profile:', insertError);
+              toast.error('Erro ao criar perfil do usuário');
+            }
+          } else {
+            console.error('Invalid profile data detected');
+            toast.error('Dados de perfil inválidos');
           }
         }
       } else if (profileData) {
         setProfile(profileData);
       }
 
-      // Fetch user session with error handling
+      // Fetch user session with enhanced error handling
       const { data: sessionData, error: sessionError } = await supabase
         .from('user_sessions')
         .select('balance, total_earned, connection_time, is_connected, last_connection')
@@ -84,7 +96,7 @@ export const useUserSession = () => {
 
       if (sessionError) {
         console.error('Error fetching session:', sessionError);
-        // Create session if it doesn't exist - start with 0 balance
+        // Create session if it doesn't exist - start with 0 balance for security
         if (sessionError.code === 'PGRST116') {
           const { error: insertError } = await supabase
             .from('user_sessions')
@@ -102,13 +114,24 @@ export const useUserSession = () => {
               is_connected: false,
               last_connection: null
             });
+          } else {
+            console.error('Error creating session:', insertError);
+            toast.error('Erro ao inicializar sessão do usuário');
           }
+        } else {
+          toast.error('Erro ao carregar dados da sessão');
         }
       } else if (sessionData) {
-        setSession(sessionData);
+        // Validate session data before setting state
+        if (sessionData.balance >= 0 && sessionData.total_earned >= 0) {
+          setSession(sessionData);
+        } else {
+          console.error('Invalid session data detected:', sessionData);
+          toast.error('Dados de sessão inválidos detectados');
+        }
       }
 
-      // Count completed tasks with error handling
+      // Count completed tasks with enhanced error handling
       const { count, error: countError } = await supabase
         .from('user_achievements')
         .select('*', { count: 'exact', head: true })
@@ -130,6 +153,12 @@ export const useUserSession = () => {
   };
 
   const updateBalance = async (newBalance: number) => {
+    // Enhanced input validation
+    if (typeof newBalance !== 'number' || isNaN(newBalance) || newBalance < 0) {
+      toast.error('Valor de saldo inválido');
+      return false;
+    }
+
     const success = await secureUpdateBalance(newBalance, 'Manual balance update');
     if (success) {
       // Refresh local state
@@ -139,7 +168,16 @@ export const useUserSession = () => {
   };
 
   const addAchievement = async (taskTitle: string, earnings: number) => {
-    const success = await addEarnings(earnings, `Tarefa "${taskTitle}" concluída com sucesso`);
+    // Enhanced input validation
+    if (!taskTitle?.trim() || typeof earnings !== 'number' || earnings <= 0) {
+      toast.error('Dados de conquista inválidos');
+      return false;
+    }
+
+    // Limit task title length for security
+    const safeTaskTitle = taskTitle.trim().substring(0, 200);
+    
+    const success = await addEarnings(earnings, `Tarefa "${safeTaskTitle}" concluída com sucesso`);
     if (success) {
       // Refresh local state
       await fetchUserData();
@@ -154,7 +192,37 @@ export const useUserSession = () => {
     daily_return: number;
     validity_days: number;
   }) => {
-    const success = await createInvestment(planData);
+    // Enhanced input validation
+    if (!planData.plan_id?.trim() || !planData.plan_name?.trim()) {
+      toast.error('Dados do plano inválidos');
+      return false;
+    }
+
+    if (typeof planData.investment_amount !== 'number' || planData.investment_amount <= 0) {
+      toast.error('Valor de investimento inválido');
+      return false;
+    }
+
+    if (typeof planData.daily_return !== 'number' || planData.daily_return <= 0) {
+      toast.error('Retorno diário inválido');
+      return false;
+    }
+
+    if (typeof planData.validity_days !== 'number' || planData.validity_days <= 0) {
+      toast.error('Período de validade inválido');
+      return false;
+    }
+
+    // Sanitize input data
+    const safePlanData = {
+      plan_id: planData.plan_id.trim().substring(0, 50),
+      plan_name: planData.plan_name.trim().substring(0, 100),
+      investment_amount: planData.investment_amount,
+      daily_return: planData.daily_return,
+      validity_days: planData.validity_days
+    };
+
+    const success = await createInvestment(safePlanData);
     if (success) {
       // Refresh local state to reflect the deducted balance
       await fetchUserData();
