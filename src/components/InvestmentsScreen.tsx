@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, TrendingUp, Calendar, DollarSign, Activity } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Calendar, DollarSign, Activity, Building2, Clock } from 'lucide-react';
 import { useUserInvestments } from '@/hooks/useUserInvestments';
 import DailyProfitsDisplay from './DailyProfitsDisplay';
 
@@ -49,85 +49,104 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
             </h1>
           </div>
           <div className="flex items-center space-x-2">
-            <Activity className="w-4 h-4 text-green-400" />
-            <span className="text-xs text-green-400">Online</span>
+            <Activity className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs text-emerald-400">Online</span>
           </div>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 gap-4">
-          <div className="bg-gradient-to-r from-blue-600/20 to-blue-500/20 rounded-xl p-4 border border-blue-500/30">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-blue-300 text-sm">Planos Ativos</p>
-                <p className="text-white text-2xl font-light">{summary.activePlans}</p>
-              </div>
-              <TrendingUp className="w-8 h-8 text-blue-400" />
+        {/* Professional Summary Card */}
+        <div className="bg-gray-800/40 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/30">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="p-2 bg-gray-700/50 rounded-lg">
+              <Building2 className="w-5 h-5 text-gray-300" />
             </div>
+            <h2 className="text-lg font-medium text-white">Resumo dos Investimentos</h2>
           </div>
-
-          <div className="bg-gradient-to-r from-green-600/20 to-green-500/20 rounded-xl p-4 border border-green-500/30">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-green-300 text-sm">Renda Diária</p>
-                <p className="text-white text-2xl font-light">{formatCurrency(summary.dailyIncome)}</p>
+          
+          <div className="grid grid-cols-1 gap-4">
+            <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl">
+              <div className="flex items-center space-x-3">
+                <TrendingUp className="w-5 h-5 text-gray-400" />
+                <div>
+                  <p className="text-gray-400 text-sm">Planos Ativos</p>
+                  <p className="text-white text-xl font-medium">{summary.activePlans}</p>
+                </div>
               </div>
-              <Calendar className="w-8 h-8 text-green-400" />
             </div>
-          </div>
 
-          <div className="bg-gradient-to-r from-purple-600/20 to-purple-500/20 rounded-xl p-4 border border-purple-500/30">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-purple-300 text-sm">Total Acumulado</p>
-                <p className="text-white text-2xl font-light">{formatCurrency(summary.totalRevenue)}</p>
+            <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl">
+              <div className="flex items-center space-x-3">
+                <Calendar className="w-5 h-5 text-gray-400" />
+                <div>
+                  <p className="text-gray-400 text-sm">Renda Diária</p>
+                  <p className="text-white text-xl font-medium">{formatCurrency(summary.dailyIncome)}</p>
+                </div>
               </div>
-              <DollarSign className="w-8 h-8 text-purple-400" />
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl">
+              <div className="flex items-center space-x-3">
+                <DollarSign className="w-5 h-5 text-gray-400" />
+                <div>
+                  <p className="text-gray-400 text-sm">Total Acumulado</p>
+                  <p className="text-white text-xl font-medium">{formatCurrency(summary.totalRevenue)}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Daily Profits Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-white">
-            Rendimentos Diários
-          </h3>
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-gray-700/50 rounded-lg">
+              <Clock className="w-5 h-5 text-gray-300" />
+            </div>
+            <h3 className="text-lg font-medium text-white">
+              Rendimentos Diários
+            </h3>
+          </div>
           <DailyProfitsDisplay />
         </div>
 
         {/* Investment Plans */}
         {investments.length > 0 && (
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-white">Planos Ativos</h3>
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-gray-700/50 rounded-lg">
+                <TrendingUp className="w-5 h-5 text-gray-300" />
+              </div>
+              <h3 className="text-lg font-medium text-white">Planos Ativos</h3>
+            </div>
             
             {investments.map((investment) => (
               <div 
                 key={investment.id}
-                className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/30"
+                className="bg-gray-800/40 backdrop-blur-sm rounded-xl p-5 border border-gray-700/30"
               >
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-white font-medium">{investment.plan_name}</h4>
-                    <div className="px-2 py-1 rounded bg-green-500/20 text-green-400 text-xs">
+                    <h4 className="text-white font-medium text-lg">{investment.plan_name}</h4>
+                    <div className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-sm border border-emerald-500/30">
                       Ativo
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <p className="text-gray-400">Investimento</p>
-                      <p className="text-white">{formatCurrency(investment.investment_amount)}</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <p className="text-gray-400 text-sm">Investimento</p>
+                      <p className="text-white font-medium">{formatCurrency(investment.investment_amount)}</p>
                     </div>
-                    <div>
-                      <p className="text-gray-400">Renda Diária</p>
-                      <p className="text-green-400">{formatCurrency(investment.daily_return)}</p>
+                    <div className="space-y-1">
+                      <p className="text-gray-400 text-sm">Renda Diária</p>
+                      <p className="text-emerald-400 font-medium">{formatCurrency(investment.daily_return)}</p>
                     </div>
-                    <div>
-                      <p className="text-gray-400">Data de Início</p>
+                    <div className="space-y-1">
+                      <p className="text-gray-400 text-sm">Data de Início</p>
                       <p className="text-white">{formatDate(investment.start_date)}</p>
                     </div>
-                    <div>
-                      <p className="text-gray-400">Validade</p>
+                    <div className="space-y-1">
+                      <p className="text-gray-400 text-sm">Validade</p>
                       <p className="text-white">{investment.validity_days} dias</p>
                     </div>
                   </div>
@@ -139,10 +158,12 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
 
         {/* Empty State */}
         {investments.length === 0 && (
-          <div className="text-center py-8">
-            <TrendingUp className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-            <p className="text-gray-400 text-lg mb-2">Nenhum investimento ativo</p>
-            <p className="text-gray-500 text-sm">
+          <div className="text-center py-12 bg-gray-800/40 backdrop-blur-sm rounded-2xl border border-gray-700/30">
+            <div className="p-4 bg-gray-700/50 rounded-2xl w-fit mx-auto mb-4">
+              <TrendingUp className="w-8 h-8 text-gray-400 mx-auto" />
+            </div>
+            <p className="text-gray-300 text-lg mb-2 font-medium">Nenhum investimento ativo</p>
+            <p className="text-gray-500 text-sm max-w-sm mx-auto">
               Comece investindo em nossos planos para ver seus rendimentos aqui
             </p>
           </div>
