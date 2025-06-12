@@ -57,7 +57,7 @@ const Dashboard = ({ onNavigate }: DashboardProps) => {
     {
       id: 'impulse',
       name: 'Plano Impulse',
-      investment: 10,
+      investment: 200,
       dailyReturn: 310,
       validity: 90,
       totalRevenue: 27900,
