@@ -53,6 +53,11 @@ const Dashboard = ({ onNavigate }: DashboardProps) => {
     )
   };
 
+  // Format currency with Brazilian formatting (thousands separator)
+  const formatCurrency = (value: number) => {
+    return `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
+
   const investmentPlans = [
     {
       id: 'impulse',
@@ -203,11 +208,11 @@ const Dashboard = ({ onNavigate }: DashboardProps) => {
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="space-y-1">
                       <p className="text-xs text-gray-400">Valor do investimento</p>
-                      <p className="text-white font-medium">R$ {plan.investment.toFixed(2).replace('.', ',')}</p>
+                      <p className="text-white font-medium">{formatCurrency(plan.investment)}</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-gray-400">Renda Diária</p>
-                      <p className="text-white font-medium">R$ {plan.dailyReturn.toFixed(2).replace('.', ',')}</p>
+                      <p className="text-white font-medium">{formatCurrency(plan.dailyReturn)}</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-gray-400">Validade</p>
@@ -215,7 +220,7 @@ const Dashboard = ({ onNavigate }: DashboardProps) => {
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-gray-400">Receita Total</p>
-                      <p className="text-white font-medium">R$ {plan.totalRevenue.toFixed(2).replace('.', ',')}</p>
+                      <p className="text-white font-medium">{formatCurrency(plan.totalRevenue)}</p>
                     </div>
                   </div>
                   
