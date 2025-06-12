@@ -33,6 +33,46 @@ export const useUserInvestments = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  const calculateSummaryFromInvestments = (investmentsData: Investment[]): InvestmentSummary => {
+    if (!investmentsData || investmentsData.length === 0) {
+      return {
+        activePlans: 0,
+        dailyIncome: 0,
+        totalRevenue: 0,
+        nextPaymentDate: new Date(Date.now() + 86400000).toISOString().split('T')[0]
+      };
+    }
+
+    const currentDate = new Date();
+    const activeInvestments = investmentsData.filter(investment => {
+      const startDate = new Date(investment.start_date);
+      const endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + investment.validity_days);
+      
+      return currentDate >= startDate && currentDate < endDate;
+    });
+
+    const activePlans = activeInvestments.length;
+    const dailyIncome = activeInvestments.reduce((sum, inv) => sum + inv.daily_return, 0);
+    
+    // Calculate total revenue based on days elapsed for each active investment
+    const totalRevenue = activeInvestments.reduce((sum, inv) => {
+      const startDate = new Date(inv.start_date);
+      const daysElapsed = Math.floor((currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      const validDays = Math.min(Math.max(daysElapsed, 0), inv.validity_days);
+      return sum + (inv.daily_return * validDays);
+    }, 0);
+
+    const nextPaymentDate = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+
+    return {
+      activePlans,
+      dailyIncome,
+      totalRevenue,
+      nextPaymentDate
+    };
+  };
+
   const fetchInvestments = async () => {
     if (!user) {
       setLoading(false);
@@ -42,7 +82,7 @@ export const useUserInvestments = () => {
     try {
       console.log('Fetching investments for user:', user.id);
       
-      // Fetch user investments with better error handling
+      // Fetch user investments with enhanced error handling
       const { data: investmentsData, error: investmentsError } = await supabase
         .from('user_investments')
         .select('*')
@@ -53,49 +93,34 @@ export const useUserInvestments = () => {
         console.error('Error fetching investments:', investmentsError);
         toast.error('Erro ao carregar investimentos');
         setInvestments([]);
+        setSummary({
+          activePlans: 0,
+          dailyIncome: 0,
+          totalRevenue: 0,
+          nextPaymentDate: new Date(Date.now() + 86400000).toISOString().split('T')[0]
+        });
       } else {
         console.log('Investments data:', investmentsData);
-        setInvestments(investmentsData || []);
-      }
-
-      // Get investment summary using the database function
-      console.log('Fetching investment summary...');
-      const { data: summaryData, error: summaryError } = await supabase
-        .rpc('get_user_daily_income_summary', {
-          p_user_id: user.id
-        });
-
-      if (summaryError) {
-        console.error('Error fetching investment summary:', summaryError);
-        toast.error('Erro ao carregar resumo de investimentos');
-        setSummary({
-          activePlans: 0,
-          dailyIncome: 0,
-          totalRevenue: 0,
-          nextPaymentDate: new Date(Date.now() + 86400000).toISOString().split('T')[0]
-        });
-      } else if (summaryData && summaryData.length > 0) {
-        const data = summaryData[0];
-        console.log('Summary data:', data);
-        setSummary({
-          activePlans: data.active_plans || 0,
-          dailyIncome: parseFloat(data.daily_income) || 0,
-          totalRevenue: parseFloat(data.total_revenue) || 0,
-          nextPaymentDate: data.next_payment_date || new Date(Date.now() + 86400000).toISOString().split('T')[0]
-        });
-      } else {
-        console.log('No summary data found, setting to zero');
-        setSummary({
-          activePlans: 0,
-          dailyIncome: 0,
-          totalRevenue: 0,
-          nextPaymentDate: new Date(Date.now() + 86400000).toISOString().split('T')[0]
-        });
+        const validInvestments = investmentsData || [];
+        setInvestments(validInvestments);
+        
+        // Calculate summary directly from investments data
+        const calculatedSummary = calculateSummaryFromInvestments(validInvestments);
+        console.log('Calculated summary:', calculatedSummary);
+        setSummary(calculatedSummary);
       }
 
     } catch (error) {
       console.error('Error in fetchInvestments:', error);
       toast.error('Erro ao carregar dados de investimentos');
+      // Set safe default values
+      setInvestments([]);
+      setSummary({
+        activePlans: 0,
+        dailyIncome: 0,
+        totalRevenue: 0,
+        nextPaymentDate: new Date(Date.now() + 86400000).toISOString().split('T')[0]
+      });
     } finally {
       setLoading(false);
     }
