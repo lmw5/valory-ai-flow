@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, TrendingUp, Calendar, DollarSign, Activity, Building2 } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Calendar, DollarSign, Activity, Building2, Package } from 'lucide-react';
 import { useUserInvestments } from '@/hooks/useUserInvestments';
 
 interface InvestmentsScreenProps {
@@ -53,43 +53,43 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
           </div>
         </div>
 
-        {/* Professional Summary Card */}
-        <div className="bg-gray-800/40 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/30">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="p-2 bg-gray-700/50 rounded-lg">
-              <Building2 className="w-5 h-5 text-gray-300" />
+        {/* Main Data Boxes */}
+        <div className="grid grid-cols-1 gap-4 animate-fade-in">
+          {/* Produtos Box */}
+          <div className="bg-[#1C1C1E]/80 backdrop-blur-sm rounded-3xl p-6 shadow-lg">
+            <div className="flex items-center space-x-4">
+              <div className="flex-shrink-0">
+                <Package className="w-5 h-5 text-white/70" />
+              </div>
+              <div className="flex-1">
+                <p className="text-white/70 text-sm font-medium">Planos Adquiridos</p>
+                <p className="text-white text-2xl font-light mt-1">{summary.activePlans}</p>
+              </div>
             </div>
-            <h2 className="text-lg font-medium text-white">Resumo dos Investimentos</h2>
           </div>
-          
-          <div className="grid grid-cols-1 gap-4">
-            <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl">
-              <div className="flex items-center space-x-3">
-                <TrendingUp className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-gray-400 text-sm">Planos Ativos</p>
-                  <p className="text-white text-xl font-medium">{summary.activePlans}</p>
-                </div>
+
+          {/* Renda Diária Box */}
+          <div className="bg-[#1C1C1E]/80 backdrop-blur-sm rounded-3xl p-6 shadow-lg">
+            <div className="flex items-center space-x-4">
+              <div className="flex-shrink-0">
+                <Calendar className="w-5 h-5 text-white/70" />
+              </div>
+              <div className="flex-1">
+                <p className="text-white/70 text-sm font-medium">Ganho por Dia</p>
+                <p className="text-white text-2xl font-light mt-1">{formatCurrency(summary.dailyIncome)}</p>
               </div>
             </div>
+          </div>
 
-            <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl">
-              <div className="flex items-center space-x-3">
-                <Calendar className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-gray-400 text-sm">Renda Diária</p>
-                  <p className="text-white text-xl font-medium">{formatCurrency(summary.dailyIncome)}</p>
-                </div>
+          {/* Renda Total Box */}
+          <div className="bg-[#1C1C1E]/80 backdrop-blur-sm rounded-3xl p-6 shadow-lg">
+            <div className="flex items-center space-x-4">
+              <div className="flex-shrink-0">
+                <DollarSign className="w-5 h-5 text-white/70" />
               </div>
-            </div>
-
-            <div className="flex items-center justify-between p-4 bg-gray-700/30 rounded-xl">
-              <div className="flex items-center space-x-3">
-                <DollarSign className="w-5 h-5 text-gray-400" />
-                <div>
-                  <p className="text-gray-400 text-sm">Total Acumulado</p>
-                  <p className="text-white text-xl font-medium">{formatCurrency(summary.totalRevenue)}</p>
-                </div>
+              <div className="flex-1">
+                <p className="text-white/70 text-sm font-medium">Total Acumulado</p>
+                <p className="text-white text-2xl font-light mt-1">{formatCurrency(summary.totalRevenue)}</p>
               </div>
             </div>
           </div>
