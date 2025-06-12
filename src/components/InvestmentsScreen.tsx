@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, TrendingUp, Calendar, DollarSign } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Calendar, DollarSign, Clock } from 'lucide-react';
 import { useUserInvestments } from '@/hooks/useUserInvestments';
 
 interface InvestmentsScreenProps {
@@ -8,13 +8,25 @@ interface InvestmentsScreenProps {
 }
 
 const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
-  const { summary, loading } = useUserInvestments();
+  const { investments, summary, loading } = useUserInvestments();
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
     }).format(value);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR');
+  };
+
+  const getDaysRemaining = (startDate: string, validityDays: number) => {
+    const start = new Date(startDate);
+    const today = new Date();
+    const daysPassed = Math.floor((today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    const daysRemaining = Math.max(0, validityDays - daysPassed);
+    return daysRemaining;
   };
 
   const indicatorBoxes = [
@@ -105,6 +117,90 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
           })}
         </div>
 
+        {/* Individual Investment Plans */}
+        {investments.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-white">Planos Ativos</h3>
+            
+            {investments.map((investment, index) => {
+              const daysRemaining = getDaysRemaining(investment.start_date, investment.validity_days);
+              const isActive = daysRemaining > 0;
+              
+              return (
+                <div 
+                  key={investment.id}
+                  className={`bg-gradient-to-r ${
+                    isActive 
+                      ? 'from-green-800/30 to-blue-800/30 border-green-500/20' 
+                      : 'from-gray-800/30 to-gray-700/30 border-gray-600/20'
+                  } rounded-2xl p-6 backdrop-blur-sm border shadow-xl`}
+                  style={{
+                    animationDelay: `${index * 0.1}s`,
+                    animation: 'fade-in 0.6s ease-out forwards'
+                  }}
+                >
+                  <div className="space-y-4">
+                    {/* Plan Header */}
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-white font-medium text-lg">{investment.plan_name}</h4>
+                      <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        isActive 
+                          ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                          : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                      }`}>
+                        {isActive ? 'Ativo' : 'Expirado'}
+                      </div>
+                    </div>
+
+                    {/* Plan Details Grid */}
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="space-y-1">
+                        <p className="text-gray-400">Investimento</p>
+                        <p className="text-white font-medium">{formatCurrency(investment.investment_amount)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-gray-400">Renda Diária</p>
+                        <p className="text-green-400 font-medium">{formatCurrency(investment.daily_return)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-gray-400">Data de Início</p>
+                        <p className="text-white font-medium">{formatDate(investment.start_date)}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-gray-400">Dias Restantes</p>
+                        <div className="flex items-center space-x-1">
+                          <Clock className="w-4 h-4 text-purple-400" />
+                          <p className={`font-medium ${isActive ? 'text-purple-400' : 'text-gray-500'}`}>
+                            {daysRemaining} dias
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs text-gray-400">
+                        <span>Progresso</span>
+                        <span>{Math.round(((investment.validity_days - daysRemaining) / investment.validity_days) * 100)}%</span>
+                      </div>
+                      <div className="w-full bg-gray-700/50 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full transition-all duration-300 ${
+                            isActive ? 'bg-gradient-to-r from-green-500 to-blue-500' : 'bg-gray-500'
+                          }`}
+                          style={{ 
+                            width: `${Math.round(((investment.validity_days - daysRemaining) / investment.validity_days) * 100)}%` 
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {/* Investment Summary */}
         <div className="bg-gray-800/50 rounded-3xl p-6 backdrop-blur-sm border border-gray-600/30 space-y-4">
           <h3 className="text-lg font-medium text-white text-center">
@@ -138,7 +234,7 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
           <p className="text-xs text-gray-500 leading-relaxed">
             {summary.activePlans === 0 ? 
               "🚀 Comece investindo em nossos planos para ver seus rendimentos aqui" :
-              "📈 Valores atualizados em tempo real"
+              "📈 Valores atualizados em tempo real. Os rendimentos são calculados automaticamente a cada 24h."
             }
           </p>
         </div>

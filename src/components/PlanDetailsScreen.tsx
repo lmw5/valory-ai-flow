@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useUserSession } from '@/hooks/useUserSession';
+import { useSecureInvestments } from '@/hooks/useSecureInvestments';
 import { toast } from 'sonner';
 
 interface PlanDetailsScreenProps {
@@ -14,8 +15,8 @@ interface PlanDetailsScreenProps {
 }
 
 const PlanDetailsScreen = ({ plan, onNavigate }: PlanDetailsScreenProps) => {
-  const { session, addInvestment } = useUserSession();
-  const [isActivating, setIsActivating] = useState(false);
+  const { session, refetch } = useUserSession();
+  const { createInvestment, loading: isCreatingInvestment } = useSecureInvestments();
   const [showInsufficientBalanceDialog, setShowInsufficientBalanceDialog] = useState(false);
 
   const balance = session?.balance || 0;
@@ -37,10 +38,8 @@ const PlanDetailsScreen = ({ plan, onNavigate }: PlanDetailsScreenProps) => {
       return;
     }
 
-    setIsActivating(true);
-
     try {
-      console.log('Calling addInvestment with data:', {
+      console.log('Calling createInvestment with data:', {
         plan_id: plan.id,
         plan_name: plan.name,
         investment_amount: plan.investment,
@@ -48,7 +47,7 @@ const PlanDetailsScreen = ({ plan, onNavigate }: PlanDetailsScreenProps) => {
         validity_days: plan.validity
       });
 
-      const success = await addInvestment({
+      const success = await createInvestment({
         plan_id: plan.id,
         plan_name: plan.name,
         investment_amount: plan.investment,
@@ -57,14 +56,14 @@ const PlanDetailsScreen = ({ plan, onNavigate }: PlanDetailsScreenProps) => {
       });
 
       if (success) {
-        toast.success('Investimento realizado com sucesso!');
-        onNavigate('dashboard');
+        console.log('Investment created successfully, refreshing user data...');
+        await refetch(); // Refresh user session data
+        toast.success('Investimento ativado com sucesso!');
+        onNavigate('investments'); // Navigate to investments screen
       }
     } catch (error) {
       console.error('Error activating plan:', error);
       toast.error('Erro ao ativar plano. Tente novamente.');
-    } finally {
-      setIsActivating(false);
     }
   };
 
@@ -183,10 +182,10 @@ const PlanDetailsScreen = ({ plan, onNavigate }: PlanDetailsScreenProps) => {
           <div className="space-y-4">
             <Button
               onClick={handleActivatePlan}
-              disabled={isActivating}
+              disabled={isCreatingInvestment}
               className="w-full h-16 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-2xl text-xl shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
             >
-              {isActivating ? (
+              {isCreatingInvestment ? (
                 <div className="flex items-center justify-center space-x-3">
                   <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   <span>Processando...</span>
