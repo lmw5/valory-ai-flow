@@ -3,8 +3,16 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, CoinsIcon } from 'lucide-react';
+import { useUserSession } from '@/hooks/useUserSession';
+import { toast } from 'sonner';
 
-const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) => {
+interface DashboardProps {
+  onNavigate: (screen: string, plan?: any) => void;
+}
+
+const Dashboard = ({ onNavigate }: DashboardProps) => {
+  const { session, profile, loading, addInvestment } = useUserSession();
+
   // Custom SVG icons for each plan
   const PlanIcons = {
     impulse: () => (
@@ -102,9 +110,31 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
     }
   ];
 
-  const handlePlanActivation = (plan) => {
-    onNavigate('plan-details', plan);
+  const handlePlanActivation = (plan: any) => {
+    if (!session || !profile) {
+      toast.error('Você precisa estar logado para investir');
+      return;
+    }
+
+    // Pass plan data including the calculated plan object
+    const planWithBalance = {
+      ...plan,
+      currentBalance: session.balance
+    };
+    
+    onNavigate('plan-details', planWithBalance);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pb-20 pt-8 px-6 flex items-center justify-center">
+        <div className="text-white text-xl">Carregando...</div>
+      </div>
+    );
+  }
+
+  const userBalance = session?.balance || 0;
+  const userName = profile?.name || 'Usuário';
 
   return (
     <div className="min-h-screen pb-20 pt-8 px-6">
@@ -112,7 +142,7 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
         {/* Greeting */}
         <div className="text-center">
           <h2 className="text-2xl font-light text-gray-300">
-            Olá, <span className="text-white font-medium">{user?.name}</span>
+            Olá, <span className="text-white font-medium">{userName}</span>
           </h2>
         </div>
 
@@ -125,7 +155,7 @@ const Dashboard = ({ user, balance, completedTasks, totalEarned, onNavigate }) =
                 Saldo disponível
               </p>
               <p className="text-4xl font-light text-white">
-                R$ {balance.toFixed(2).replace('.', ',')}
+                R$ {userBalance.toFixed(2).replace('.', ',')}
               </p>
             </div>
           </div>

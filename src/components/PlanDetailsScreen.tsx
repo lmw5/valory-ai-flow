@@ -1,22 +1,24 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, DollarSign, Calendar, TrendingUp, Shield, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { useSecureInvestments } from '@/hooks/useSecureInvestments';
+import { useUserSession } from '@/hooks/useUserSession';
 import { toast } from 'sonner';
 
 interface PlanDetailsScreenProps {
   plan: any;
-  balance: number;
   onNavigate: (screen: string) => void;
 }
 
-const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps) => {
-  const { createInvestment, checkSuspiciousActivity, loading } = useSecureInvestments();
+const PlanDetailsScreen = ({ plan, onNavigate }: PlanDetailsScreenProps) => {
+  const { session, addInvestment } = useUserSession();
   const [isActivating, setIsActivating] = useState(false);
   const [showInsufficientBalanceDialog, setShowInsufficientBalanceDialog] = useState(false);
+
+  const balance = session?.balance || 0;
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -34,14 +36,7 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
     setIsActivating(true);
 
     try {
-      // Check for suspicious activity first
-      const isSuspicious = await checkSuspiciousActivity();
-      if (isSuspicious) {
-        toast.error('Atividade suspeita detectada. Entre em contato com o suporte.');
-        return;
-      }
-
-      const success = await createInvestment({
+      const success = await addInvestment({
         plan_id: plan.id,
         plan_name: plan.name,
         investment_amount: plan.investment,
@@ -50,6 +45,7 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
       });
 
       if (success) {
+        toast.success('Investimento realizado com sucesso!');
         onNavigate('dashboard');
       }
     } catch (error) {
@@ -175,10 +171,10 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
           <div className="space-y-4">
             <Button
               onClick={handleActivatePlan}
-              disabled={isActivating || loading}
+              disabled={isActivating}
               className="w-full h-16 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-2xl text-xl shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
             >
-              {isActivating || loading ? (
+              {isActivating ? (
                 <div className="flex items-center justify-center space-x-3">
                   <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   <span>Processando...</span>
