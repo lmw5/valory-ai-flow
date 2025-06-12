@@ -84,20 +84,20 @@ export const useUserSession = () => {
 
       if (sessionError) {
         console.error('Error fetching session:', sessionError);
-        // Create session if it doesn't exist
+        // Create session if it doesn't exist - start with 0 balance
         if (sessionError.code === 'PGRST116') {
           const { error: insertError } = await supabase
             .from('user_sessions')
             .insert({
               user_id: user.id,
-              balance: 50.00,
-              total_earned: 50.00
+              balance: 0.00,
+              total_earned: 0.00
             });
           
           if (!insertError) {
             setSession({
-              balance: 50.00,
-              total_earned: 50.00,
+              balance: 0.00,
+              total_earned: 0.00,
               connection_time: 0,
               is_connected: false,
               last_connection: null

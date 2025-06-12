@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -161,13 +160,7 @@ const AuthScreen = () => {
           </button>
           
           {/* Bonus Message - only show on signup */}
-          {!isLogin && (
-            <div className="bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-xl p-4 backdrop-blur-sm border border-green-500/30">
-              <p className="text-green-400 text-sm font-medium">
-                🎉 Ganhe R$50 de bônus ao criar sua conta
-              </p>
-            </div>
-          )}
+          
         </div>
       </div>
     </div>
