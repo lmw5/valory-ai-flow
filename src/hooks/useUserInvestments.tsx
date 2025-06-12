@@ -2,10 +2,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { toast } from 'sonner';
 
-interface UserInvestment {
+interface Investment {
   id: string;
-  user_id: string;
   plan_id: string;
   plan_name: string;
   investment_amount: number;
@@ -13,130 +13,89 @@ interface UserInvestment {
   validity_days: number;
   start_date: string;
   created_at: string;
-  updated_at: string;
 }
 
 interface InvestmentSummary {
   activePlans: number;
   dailyIncome: number;
   totalRevenue: number;
+  nextPaymentDate: string;
 }
 
 export const useUserInvestments = () => {
   const { user } = useAuth();
-  const [investments, setInvestments] = useState<UserInvestment[]>([]);
+  const [investments, setInvestments] = useState<Investment[]>([]);
   const [summary, setSummary] = useState<InvestmentSummary>({
     activePlans: 0,
     dailyIncome: 0,
-    totalRevenue: 0
+    totalRevenue: 0,
+    nextPaymentDate: ''
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user) {
-      fetchUserInvestments();
-    } else {
-      setInvestments([]);
-      setSummary({ activePlans: 0, dailyIncome: 0, totalRevenue: 0 });
+  const fetchInvestments = async () => {
+    if (!user) {
       setLoading(false);
+      return;
     }
-  }, [user]);
-
-  const fetchUserInvestments = async () => {
-    if (!user) return;
 
     try {
-      // Query user_investments table with proper typing
-      const { data, error } = await supabase
+      // Fetch user investments
+      const { data: investmentsData, error: investmentsError } = await supabase
         .from('user_investments')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching investments:', error);
+      if (investmentsError) {
+        console.error('Error fetching investments:', investmentsError);
+        toast.error('Erro ao carregar investimentos');
         setInvestments([]);
-        setSummary({ activePlans: 0, dailyIncome: 0, totalRevenue: 0 });
       } else {
-        const investmentData = data || [];
-        setInvestments(investmentData);
-        calculateSummary(investmentData);
+        setInvestments(investmentsData || []);
       }
+
+      // Get investment summary using the new function
+      const { data: summaryData, error: summaryError } = await supabase
+        .rpc('get_user_daily_income_summary', {
+          p_user_id: user.id
+        });
+
+      if (summaryError) {
+        console.error('Error fetching investment summary:', summaryError);
+        toast.error('Erro ao carregar resumo de investimentos');
+        setSummary({
+          activePlans: 0,
+          dailyIncome: 0,
+          totalRevenue: 0,
+          nextPaymentDate: new Date(Date.now() + 86400000).toISOString().split('T')[0]
+        });
+      } else if (summaryData && summaryData.length > 0) {
+        const data = summaryData[0];
+        setSummary({
+          activePlans: data.active_plans || 0,
+          dailyIncome: data.daily_income || 0,
+          totalRevenue: data.total_revenue || 0,
+          nextPaymentDate: data.next_payment_date || new Date(Date.now() + 86400000).toISOString().split('T')[0]
+        });
+      }
+
     } catch (error) {
-      console.error('Error fetching investments:', error);
-      setInvestments([]);
-      setSummary({ activePlans: 0, dailyIncome: 0, totalRevenue: 0 });
+      console.error('Error in fetchInvestments:', error);
+      toast.error('Erro ao carregar dados de investimentos');
     } finally {
       setLoading(false);
     }
   };
 
-  const calculateSummary = (investmentList: UserInvestment[]) => {
-    const today = new Date();
-    
-    let totalDailyIncome = 0;
-    let totalRevenue = 0;
-    let activePlansCount = 0;
-
-    investmentList.forEach((investment) => {
-      const startDate = new Date(investment.start_date);
-      const daysPassed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-      const validDays = Math.min(daysPassed, investment.validity_days);
-
-      if (validDays >= 0 && daysPassed <= investment.validity_days) {
-        activePlansCount++;
-        totalDailyIncome += Number(investment.daily_return);
-        totalRevenue += Number(investment.daily_return) * validDays;
-      }
-    });
-
-    setSummary({
-      activePlans: activePlansCount,
-      dailyIncome: totalDailyIncome,
-      totalRevenue: totalRevenue
-    });
-  };
-
-  const addInvestment = async (planData: {
-    plan_id: string;
-    plan_name: string;
-    investment_amount: number;
-    daily_return: number;
-    validity_days: number;
-  }) => {
-    if (!user) return false;
-
-    try {
-      const { error } = await supabase
-        .from('user_investments')
-        .insert({
-          user_id: user.id,
-          plan_id: planData.plan_id,
-          plan_name: planData.plan_name,
-          investment_amount: planData.investment_amount,
-          daily_return: planData.daily_return,
-          validity_days: planData.validity_days,
-          start_date: new Date().toISOString()
-        });
-
-      if (error) {
-        console.error('Error adding investment:', error);
-        return false;
-      } else {
-        await fetchUserInvestments();
-        return true;
-      }
-    } catch (error) {
-      console.error('Error adding investment:', error);
-      return false;
-    }
-  };
+  useEffect(() => {
+    fetchInvestments();
+  }, [user]);
 
   return {
     investments,
     summary,
     loading,
-    addInvestment,
-    refetch: fetchUserInvestments
+    refetch: fetchInvestments
   };
 };

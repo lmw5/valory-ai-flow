@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { toast } from 'sonner';
 
 interface DailyProfit {
   id: string;
@@ -17,76 +18,79 @@ export const useDailyProfits = () => {
   const [todaysProfits, setTodaysProfits] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user) {
-      fetchDailyProfits();
-    } else {
-      setDailyProfits([]);
-      setTodaysProfits(0);
-      setLoading(false);
-    }
-  }, [user]);
-
   const fetchDailyProfits = async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
     try {
-      // Fetch daily profit achievements
-      const { data, error } = await supabase
-        .from('user_achievements')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('achievement_type', 'daily_profit')
-        .order('earned_at', { ascending: false });
+      // Get daily profits history using the new function
+      const { data: profitsData, error: profitsError } = await supabase
+        .rpc('get_user_daily_profits_history', {
+          p_user_id: user.id,
+          p_limit: 10
+        });
 
-      if (error) {
-        console.error('Error fetching daily profits:', error);
+      if (profitsError) {
+        console.error('Error fetching daily profits:', profitsError);
+        toast.error('Erro ao carregar histórico de rendimentos');
         setDailyProfits([]);
-        setTodaysProfits(0);
       } else {
-        const profits = data || [];
-        setDailyProfits(profits);
-
-        // Calculate today's profits
-        const today = new Date().toDateString();
-        const todaysTotal = profits
-          .filter(profit => new Date(profit.earned_at).toDateString() === today)
-          .reduce((sum, profit) => sum + profit.value, 0);
-        
-        setTodaysProfits(todaysTotal);
+        setDailyProfits(profitsData || []);
       }
+
+      // Calculate today's profits
+      const today = new Date().toISOString().split('T')[0];
+      const todaysData = (profitsData || []).filter(
+        profit => profit.earned_at.startsWith(today)
+      );
+      
+      const todaysTotal = todaysData.reduce((sum, profit) => sum + profit.value, 0);
+      setTodaysProfits(todaysTotal);
+
     } catch (error) {
-      console.error('Error fetching daily profits:', error);
-      setDailyProfits([]);
-      setTodaysProfits(0);
+      console.error('Error in fetchDailyProfits:', error);
+      toast.error('Erro ao carregar dados de rendimentos');
     } finally {
       setLoading(false);
     }
   };
 
   const triggerManualCalculation = async () => {
+    if (!user) {
+      toast.error('Você precisa estar logado');
+      return;
+    }
+
     try {
+      console.log('Triggering manual calculation...');
       const { data, error } = await supabase.rpc('trigger_daily_profits');
       
       if (error) {
         console.error('Error triggering manual calculation:', error);
-        return false;
+        toast.error('Erro ao calcular rendimentos');
       } else {
-        console.log('Manual calculation triggered:', data);
+        console.log('Manual calculation result:', data);
+        toast.success('Rendimentos calculados com sucesso!');
+        // Refresh the data
         await fetchDailyProfits();
-        return true;
       }
     } catch (error) {
-      console.error('Error triggering manual calculation:', error);
-      return false;
+      console.error('Error in triggerManualCalculation:', error);
+      toast.error('Erro ao processar solicitação');
     }
   };
+
+  useEffect(() => {
+    fetchDailyProfits();
+  }, [user]);
 
   return {
     dailyProfits,
     todaysProfits,
     loading,
-    refetch: fetchDailyProfits,
-    triggerManualCalculation
+    triggerManualCalculation,
+    refetch: fetchDailyProfits
   };
 };

@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { ArrowLeft, TrendingUp, Calendar, DollarSign, Clock } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Calendar, DollarSign, Clock, Activity } from 'lucide-react';
 import { useUserInvestments } from '@/hooks/useUserInvestments';
+import DailyProfitsDisplay from './DailyProfitsDisplay';
 
 interface InvestmentsScreenProps {
   onNavigate?: (screen: string) => void;
@@ -32,21 +33,27 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
   const indicatorBoxes = [
     {
       id: 'products',
-      title: 'Produtos',
-      value: `${summary.activePlans} Planos`,
-      icon: TrendingUp
+      title: 'Planos Ativos',
+      value: `${summary.activePlans}`,
+      subtitle: summary.activePlans === 1 ? 'plano' : 'planos',
+      icon: TrendingUp,
+      color: 'from-blue-700 to-blue-800'
     },
     {
       id: 'daily',
       title: 'Renda Diária',
-      value: `${formatCurrency(summary.dailyIncome)}/dia`,
-      icon: Calendar
+      value: formatCurrency(summary.dailyIncome),
+      subtitle: 'por dia',
+      icon: Calendar,
+      color: 'from-green-700 to-green-800'
     },
     {
       id: 'total',
-      title: 'Renda Total',
+      title: 'Total Acumulado',
       value: formatCurrency(summary.totalRevenue),
-      icon: DollarSign
+      subtitle: 'até hoje',
+      icon: DollarSign,
+      color: 'from-purple-700 to-purple-800'
     }
   ];
 
@@ -77,6 +84,10 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
                 Meus Investimentos
               </h1>
             </div>
+            <div className="flex items-center space-x-2">
+              <Activity className="w-4 h-4 text-green-400" />
+              <span className="text-xs text-green-400">Online</span>
+            </div>
           </div>
           
           <p className="text-gray-400 text-sm leading-relaxed ml-14">
@@ -92,7 +103,7 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
             return (
               <div 
                 key={box.id}
-                className="bg-gradient-to-r from-gray-700 to-gray-800 rounded-2xl p-6 backdrop-blur-sm border border-gray-600/20 shadow-xl hover:scale-[1.02] transition-all duration-300"
+                className={`bg-gradient-to-r ${box.color} rounded-2xl p-6 backdrop-blur-sm border border-gray-600/20 shadow-xl hover:scale-[1.02] transition-all duration-300`}
                 style={{
                   animationDelay: `${index * 0.1}s`,
                   animation: 'fade-in 0.6s ease-out forwards'
@@ -106,6 +117,9 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
                     <p className="text-white text-xl font-light">
                       {box.value}
                     </p>
+                    <p className="text-white/60 text-xs">
+                      {box.subtitle}
+                    </p>
                   </div>
                   
                   <div className="bg-white/10 p-3 rounded-full backdrop-blur-sm">
@@ -117,6 +131,15 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
           })}
         </div>
 
+        {/* Daily Profits Section */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium text-white flex items-center">
+            <TrendingUp className="w-5 h-5 mr-2" />
+            Rendimentos Diários
+          </h3>
+          <DailyProfitsDisplay />
+        </div>
+
         {/* Individual Investment Plans */}
         {investments.length > 0 && (
           <div className="space-y-4">
@@ -125,6 +148,7 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
             {investments.map((investment, index) => {
               const daysRemaining = getDaysRemaining(investment.start_date, investment.validity_days);
               const isActive = daysRemaining > 0;
+              const progressPercentage = Math.round(((investment.validity_days - daysRemaining) / investment.validity_days) * 100);
               
               return (
                 <div 
@@ -181,16 +205,14 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
                     <div className="space-y-2">
                       <div className="flex justify-between text-xs text-gray-400">
                         <span>Progresso</span>
-                        <span>{Math.round(((investment.validity_days - daysRemaining) / investment.validity_days) * 100)}%</span>
+                        <span>{progressPercentage}%</span>
                       </div>
                       <div className="w-full bg-gray-700/50 rounded-full h-2">
                         <div 
                           className={`h-2 rounded-full transition-all duration-300 ${
                             isActive ? 'bg-gradient-to-r from-green-500 to-blue-500' : 'bg-gray-500'
                           }`}
-                          style={{ 
-                            width: `${Math.round(((investment.validity_days - daysRemaining) / investment.validity_days) * 100)}%` 
-                          }}
+                          style={{ width: `${progressPercentage}%` }}
                         />
                       </div>
                     </div>
@@ -234,7 +256,7 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
           <p className="text-xs text-gray-500 leading-relaxed">
             {summary.activePlans === 0 ? 
               "🚀 Comece investindo em nossos planos para ver seus rendimentos aqui" :
-              "📈 Valores atualizados em tempo real. Os rendimentos são calculados automaticamente a cada 24h."
+              "📈 Valores atualizados automaticamente. Os rendimentos são processados diariamente às 00:00."
             }
           </p>
         </div>

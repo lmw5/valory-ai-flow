@@ -231,6 +231,25 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      get_user_daily_income_summary: {
+        Args: { p_user_id: string }
+        Returns: {
+          active_plans: number
+          daily_income: number
+          total_revenue: number
+          next_payment_date: string
+        }[]
+      }
+      get_user_daily_profits_history: {
+        Args: { p_user_id: string; p_limit?: number }
+        Returns: {
+          id: string
+          achievement_name: string
+          description: string
+          value: number
+          earned_at: string
+        }[]
+      }
       log_audit_event: {
         Args: {
           p_user_id: string
