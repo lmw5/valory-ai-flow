@@ -9,6 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          new_values: Json | null
+          old_values: Json | null
+          table_name: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          table_name: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          table_name?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -163,6 +199,24 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      check_user_balance: {
+        Args: { user_uuid: string; required_amount: number }
+        Returns: boolean
+      }
+      detect_suspicious_investment_activity: {
+        Args: { p_user_id: string }
+        Returns: boolean
+      }
+      log_audit_event: {
+        Args: {
+          p_user_id: string
+          p_action: string
+          p_table_name: string
+          p_old_values?: Json
+          p_new_values?: Json
+        }
+        Returns: undefined
+      }
       sanitize_user_input: {
         Args: { input_text: string }
         Returns: string
@@ -170,6 +224,18 @@ export type Database = {
       trigger_daily_profits: {
         Args: Record<PropertyKey, never>
         Returns: Json
+      }
+      validate_investment_plan: {
+        Args: {
+          investment_amount: number
+          daily_return: number
+          validity_days: number
+        }
+        Returns: boolean
+      }
+      validate_monetary_amount: {
+        Args: { amount: number; min_amount?: number; max_amount?: number }
+        Returns: boolean
       }
       validate_text_input: {
         Args: { input_text: string; max_length?: number }

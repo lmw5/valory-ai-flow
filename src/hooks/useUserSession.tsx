@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { useSecureBalance } from './useSecureBalance';
+import { useSecureInvestments } from './useSecureInvestments';
 
 interface UserSession {
   balance: number;
@@ -18,6 +20,8 @@ interface UserProfile {
 
 export const useUserSession = () => {
   const { user } = useAuth();
+  const { updateBalance: secureUpdateBalance, addEarnings } = useSecureBalance();
+  const { createInvestment } = useSecureInvestments();
   const [session, setSession] = useState<UserSession | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [completedTasks, setCompletedTasks] = useState(0);
@@ -84,53 +88,21 @@ export const useUserSession = () => {
   };
 
   const updateBalance = async (newBalance: number) => {
-    if (!user || !session) return;
-
-    try {
-      const { error } = await supabase
-        .from('user_sessions')
-        .update({ 
-          balance: newBalance,
-          total_earned: session.total_earned + (newBalance - session.balance)
-        })
-        .eq('user_id', user.id);
-
-      if (error) {
-        console.error('Error updating balance:', error);
-      } else {
-        setSession(prev => prev ? {
-          ...prev,
-          balance: newBalance,
-          total_earned: prev.total_earned + (newBalance - prev.balance)
-        } : null);
-      }
-    } catch (error) {
-      console.error('Error updating balance:', error);
+    const success = await secureUpdateBalance(newBalance);
+    if (success) {
+      // Refresh local state
+      await fetchUserData();
     }
+    return success;
   };
 
   const addAchievement = async (taskTitle: string, earnings: number) => {
-    if (!user) return;
-
-    try {
-      const { error } = await supabase
-        .from('user_achievements')
-        .insert({
-          user_id: user.id,
-          achievement_type: 'task_completion',
-          achievement_name: taskTitle,
-          description: `Tarefa "${taskTitle}" concluída com sucesso`,
-          value: earnings
-        });
-
-      if (error) {
-        console.error('Error adding achievement:', error);
-      } else {
-        setCompletedTasks(prev => prev + 1);
-      }
-    } catch (error) {
-      console.error('Error adding achievement:', error);
+    const success = await addEarnings(earnings, `Tarefa "${taskTitle}" concluída com sucesso`);
+    if (success) {
+      // Refresh local state
+      await fetchUserData();
     }
+    return success;
   };
 
   const addInvestment = async (planData: {
@@ -140,52 +112,12 @@ export const useUserSession = () => {
     daily_return: number;
     validity_days: number;
   }) => {
-    if (!user || !session) return false;
-
-    try {
-      // Check if user has enough balance
-      if (session.balance < planData.investment_amount) {
-        return false;
-      }
-
-      // Add investment record
-      const { error: investmentError } = await supabase
-        .from('user_investments' as any)
-        .insert({
-          user_id: user.id,
-          plan_id: planData.plan_id,
-          plan_name: planData.plan_name,
-          investment_amount: planData.investment_amount,
-          daily_return: planData.daily_return,
-          validity_days: planData.validity_days,
-          start_date: new Date().toISOString()
-        });
-
-      if (investmentError) {
-        console.error('Error adding investment:', investmentError);
-        return false;
-      }
-
-      // Update user balance by deducting the investment amount
-      const newBalance = session.balance - planData.investment_amount;
-      const { error: balanceError } = await supabase
-        .from('user_sessions')
-        .update({ balance: newBalance })
-        .eq('user_id', user.id);
-
-      if (balanceError) {
-        console.error('Error updating balance:', balanceError);
-        return false;
-      }
-
-      // Update local state
-      setSession(prev => prev ? { ...prev, balance: newBalance } : null);
-
-      return true;
-    } catch (error) {
-      console.error('Error adding investment:', error);
-      return false;
+    const success = await createInvestment(planData);
+    if (success) {
+      // Refresh local state to reflect the deducted balance
+      await fetchUserData();
     }
+    return success;
   };
 
   return {
