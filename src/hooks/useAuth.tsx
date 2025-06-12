@@ -44,14 +44,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Handle successful signup - removed any mention of initial balance
-        if (event === 'SIGNED_UP') {
-          toast.success('Conta criada com sucesso! Bem-vindo!');
-        }
-        
-        // Handle successful signin
+        // Handle successful signup - no bonus mentioned at all
         if (event === 'SIGNED_IN') {
-          toast.success('Login realizado com sucesso!');
+          // Only show success for actual sign in, not sign up
+          if (session?.user) {
+            toast.success('Login realizado com sucesso!');
+          }
         }
       }
     );
@@ -93,6 +91,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } else {
           toast.error(error.message || 'Erro ao criar conta');
         }
+      } else {
+        // Show success message only after successful signup
+        toast.success('Conta criada com sucesso! Verifique seu email para confirmar.');
       }
       
       return { error };
