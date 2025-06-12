@@ -91,7 +91,7 @@ export const useSecureBalance = () => {
         return false;
       }
 
-      const response = data as AddEarningsResponse;
+      const response = data as unknown as AddEarningsResponse;
 
       if (!response?.success) {
         console.error('Add earnings failed:', response?.error);

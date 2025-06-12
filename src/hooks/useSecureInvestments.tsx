@@ -47,7 +47,7 @@ export const useSecureInvestments = () => {
         return false;
       }
 
-      const response = data as InvestmentResponse;
+      const response = data as unknown as InvestmentResponse;
 
       // Check the result from the function
       if (!response?.success) {
