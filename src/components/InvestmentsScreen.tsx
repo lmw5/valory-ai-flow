@@ -56,7 +56,7 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
         {/* Main Data Boxes */}
         <div className="grid grid-cols-1 gap-4 animate-fade-in">
           {/* Produtos Box */}
-          <div className="bg-[#1C1C1E]/80 backdrop-blur-sm rounded-3xl p-6 shadow-lg">
+          <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-xl">
             <div className="flex items-center space-x-4">
               <div className="flex-shrink-0">
                 <Package className="w-5 h-5 text-white/70" />
@@ -69,7 +69,7 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
           </div>
 
           {/* Renda Diária Box */}
-          <div className="bg-[#1C1C1E]/80 backdrop-blur-sm rounded-3xl p-6 shadow-lg">
+          <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-xl">
             <div className="flex items-center space-x-4">
               <div className="flex-shrink-0">
                 <Calendar className="w-5 h-5 text-white/70" />
@@ -82,7 +82,7 @@ const InvestmentsScreen = ({ onNavigate }: InvestmentsScreenProps) => {
           </div>
 
           {/* Renda Total Box */}
-          <div className="bg-[#1C1C1E]/80 backdrop-blur-sm rounded-3xl p-6 shadow-lg">
+          <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-xl">
             <div className="flex items-center space-x-4">
               <div className="flex-shrink-0">
                 <DollarSign className="w-5 h-5 text-white/70" />
