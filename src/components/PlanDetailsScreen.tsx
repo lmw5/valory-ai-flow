@@ -81,7 +81,7 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
             </div>
           </div>
 
-          {/* Plan Title */}
+          {/* Plan Title - Centralized */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">
               {plan.name}
@@ -125,32 +125,30 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
                 </div>
                 <Separator className="bg-white/10" />
 
-                {/* Total Revenue */}
-                <div className="flex items-center justify-between py-4 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl px-4 mt-6">
-                  <span className="text-gray-300 font-medium text-lg">Receita Total</span>
-                  <span className="text-yellow-400 font-bold text-2xl">{formatCurrency(totalRevenue)}</span>
+                {/* Total Revenue - Centralized */}
+                <div className="text-center py-4 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl px-4 mt-6">
+                  <div className="text-gray-300 font-medium text-lg mb-2">Receita Total</div>
+                  <div className="text-yellow-400 font-bold text-2xl">{formatCurrency(totalRevenue)}</div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Current Balance */}
-          <div className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-xl p-4 mb-6">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400 font-medium">Saldo Disponível</span>
-              <span className="text-white font-bold text-lg">{formatCurrency(balance)}</span>
-            </div>
+          {/* Current Balance - Centralized */}
+          <div className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-xl p-4 mb-6 text-center">
+            <div className="text-gray-400 font-medium mb-2">Saldo Disponível</div>
+            <div className="text-white font-bold text-lg">{formatCurrency(balance)}</div>
           </div>
 
-          {/* Confirm Button */}
-          <div className="space-y-4">
+          {/* Confirm Button - Centralized */}
+          <div className="flex flex-col items-center space-y-4">
             <Button
               onClick={handleActivatePlan}
               disabled={isActivating || loading}
               className="w-full h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl text-lg shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isActivating || loading ? (
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center justify-center space-x-3">
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   <span>Processando...</span>
                 </div>
@@ -159,7 +157,7 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
               )}
             </Button>
 
-            {/* Security Notice */}
+            {/* Security Notice - Centralized */}
             <p className="text-xs text-gray-500 text-center">
               🔒 Transação protegida com criptografia de ponta a ponta
             </p>
@@ -174,10 +172,10 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
             <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto">
               <AlertTriangle className="w-8 h-8 text-red-400" />
             </div>
-            <AlertDialogTitle className="text-red-400 text-2xl font-bold">
+            <AlertDialogTitle className="text-red-400 text-2xl font-bold text-center">
               Saldo Insuficiente
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-300 text-base leading-relaxed space-y-3">
+            <AlertDialogDescription className="text-gray-300 text-base leading-relaxed space-y-3 text-center">
               <p>
                 Você precisa de <span className="text-white font-semibold">{formatCurrency(plan.investment)}</span> para este investimento.
               </p>
