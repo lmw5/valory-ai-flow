@@ -89,6 +89,12 @@ const AuthScreen = () => {
             <h2 className="text-2xl font-light text-white">
               {isLogin ? 'Entrar' : 'Criar Conta'}
             </h2>
+            {/* Removed any mention of initial bonus - accounts start with zero balance */}
+            {!isLogin && (
+              <p className="text-gray-400 text-sm mt-2">
+                Sua conta será criada com saldo inicial de R$ 0,00
+              </p>
+            )}
           </div>
 
           {error && (

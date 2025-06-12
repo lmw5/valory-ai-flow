@@ -87,7 +87,7 @@ export const useUserSession = () => {
         setProfile(profileData);
       }
 
-      // Fetch user session with enhanced error handling - ZERO BALANCE ONLY
+      // Fetch user session with STRICT zero balance enforcement
       const { data: sessionData, error: sessionError } = await supabase
         .from('user_sessions')
         .select('balance, total_earned, connection_time, is_connected, last_connection')
@@ -122,12 +122,37 @@ export const useUserSession = () => {
           toast.error('Erro ao carregar dados da sessão');
         }
       } else if (sessionData) {
-        // Validate session data before setting state - ensure non-negative values only
-        if (sessionData.balance >= 0 && sessionData.total_earned >= 0) {
-          setSession(sessionData);
+        // Validate session data before setting state - ZERO BALANCE POLICY enforcement
+        const validatedBalance = Math.max(0, sessionData.balance || 0);
+        const validatedTotalEarned = Math.max(0, sessionData.total_earned || 0);
+        
+        // If session data shows invalid values, enforce zero balance
+        if (sessionData.balance < 0 || sessionData.total_earned < 0) {
+          console.warn('Invalid session data detected, enforcing zero balance policy');
+          await supabase
+            .from('user_sessions')
+            .update({
+              balance: 0.00,
+              total_earned: 0.00,
+              updated_at: new Date().toISOString()
+            })
+            .eq('user_id', user.id);
+          
+          setSession({
+            balance: 0.00,
+            total_earned: 0.00,
+            connection_time: sessionData.connection_time || 0,
+            is_connected: sessionData.is_connected || false,
+            last_connection: sessionData.last_connection
+          });
         } else {
-          console.error('Invalid session data detected:', sessionData);
-          toast.error('Dados de sessão inválidos detectados');
+          setSession({
+            balance: validatedBalance,
+            total_earned: validatedTotalEarned,
+            connection_time: sessionData.connection_time || 0,
+            is_connected: sessionData.is_connected || false,
+            last_connection: sessionData.last_connection
+          });
         }
       }
 

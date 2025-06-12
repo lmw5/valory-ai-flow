@@ -227,6 +227,10 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: boolean
       }
+      enforce_zero_balance_on_signup: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       log_audit_event: {
         Args: {
           p_user_id: string
