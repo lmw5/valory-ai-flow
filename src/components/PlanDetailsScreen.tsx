@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, DollarSign, Calendar, TrendingUp, Shield, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -222,21 +221,21 @@ const PlanDetailsScreen = ({ plan, balance, onNavigate }: PlanDetailsScreenProps
               </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="flex flex-col space-y-3 pt-6">
+          <AlertDialogFooter className="flex flex-row space-x-3 pt-6">
+            <AlertDialogAction
+              onClick={() => setShowInsufficientBalanceDialog(false)}
+              className="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-2xl h-12 text-base"
+            >
+              Voltar
+            </AlertDialogAction>
             <AlertDialogAction
               onClick={() => {
                 setShowInsufficientBalanceDialog(false);
                 onNavigate('deposit');
               }}
-              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-2xl h-12 text-base"
+              className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-2xl h-12 text-base"
             >
               Fazer Depósito
-            </AlertDialogAction>
-            <AlertDialogAction
-              onClick={() => setShowInsufficientBalanceDialog(false)}
-              className="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-2xl h-12 text-base"
-            >
-              Voltar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
