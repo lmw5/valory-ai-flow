@@ -4,6 +4,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
 
+interface AddEarningsResponse {
+  success: boolean;
+  error?: string;
+  new_balance?: number;
+}
+
 export const useSecureBalance = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -85,13 +91,15 @@ export const useSecureBalance = () => {
         return false;
       }
 
-      if (!data?.success) {
-        console.error('Add earnings failed:', data?.error);
-        toast.error(data?.error || 'Erro ao adicionar ganhos');
+      const response = data as AddEarningsResponse;
+
+      if (!response?.success) {
+        console.error('Add earnings failed:', response?.error);
+        toast.error(response?.error || 'Erro ao adicionar ganhos');
         return false;
       }
 
-      toast.success(`Ganhos adicionados! Novo saldo: R$ ${data.new_balance?.toFixed(2)}`);
+      toast.success(`Ganhos adicionados! Novo saldo: R$ ${response.new_balance?.toFixed(2)}`);
       return true;
     } catch (error) {
       console.error('Unexpected error adding earnings:', error);

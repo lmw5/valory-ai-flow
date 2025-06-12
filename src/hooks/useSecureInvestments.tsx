@@ -12,6 +12,12 @@ interface InvestmentPlan {
   validity_days: number;
 }
 
+interface InvestmentResponse {
+  success: boolean;
+  error?: string;
+  new_balance?: number;
+}
+
 export const useSecureInvestments = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -41,24 +47,26 @@ export const useSecureInvestments = () => {
         return false;
       }
 
+      const response = data as InvestmentResponse;
+
       // Check the result from the function
-      if (!data?.success) {
-        console.error('Investment creation failed:', data?.error);
+      if (!response?.success) {
+        console.error('Investment creation failed:', response?.error);
         
         // Handle specific error cases with user-friendly messages
-        if (data?.error?.includes('Insufficient balance')) {
+        if (response?.error?.includes('Insufficient balance')) {
           toast.error('Saldo insuficiente para este investimento');
-        } else if (data?.error?.includes('Invalid investment parameters')) {
+        } else if (response?.error?.includes('Invalid investment parameters')) {
           toast.error('Parâmetros de investimento inválidos');
-        } else if (data?.error?.includes('User session not found')) {
+        } else if (response?.error?.includes('User session not found')) {
           toast.error('Sessão de usuário não encontrada');
         } else {
-          toast.error(data?.error || 'Erro ao criar investimento');
+          toast.error(response?.error || 'Erro ao criar investimento');
         }
         return false;
       }
 
-      toast.success(`Investimento criado com sucesso! Novo saldo: R$ ${data.new_balance?.toFixed(2)}`);
+      toast.success(`Investimento criado com sucesso! Novo saldo: R$ ${response.new_balance?.toFixed(2)}`);
       return true;
     } catch (error) {
       console.error('Unexpected error:', error);
